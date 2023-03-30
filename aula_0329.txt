@@ -1,0 +1,191 @@
+Escalonamento
+	Formas de tratar:
+	
+		Ex: ter vários estados de pronto
+			Em um dos estados coloca 1 tipo de prioridade, em outro prioridade 2 etc.
+		
+	Escalonamento de Tempo Real:
+		No caso do tempo real não tem como ter muita certeza de que algo vai terminar no tempo certinho
+		Não temos essa garantia de que vai gastar x ms
+		
+	Exercícios
+		1) Escalonamento circular
+			Fatia de tempo = 10 ut (unidades de tempo)
+			Tempo de troca de contexto = S = 0 ut (sobrecarga)
+			Computador com apenas um processador
+			
+			No momento inicial temos os processos P1 e P2 em execução no estado de pronto
+			
+			P1 7 ut de CPU
+			P2 16 ut de CPU
+			
+			a) P1 e P2 é executado nessa ordem
+			b) P1 tem entrada aos 3 ut e consome 8 ut para ser concluída
+			
+			Exe no slide
+			
+			Q -> quantum, fatia de tempo = 10 ut
+			S -> sobrecarga = 0 ut
+			
+			P1 inicia e recebe entrada no ut 3, nisso ele é bloqueado por 8 ut, ou seja, vai terminar no instante 11 ut
+			No tempo de bloqueado do P1 o P2 inicia o processamento, e roda as 10 ut disponíveis do Q de um total de 16 ut, restando 6 ut para finalizar
+			Nisso o P2 finaliza no instante 13 ut por conta do final da fatia de tempo
+			O P1 volta a rodar, pois não estava mais bloqueado e a fatia de tempo permitiu, aí ele roda os 4 ut restantes dele e finaliza no instante 17 ut
+			A partir do instante 17 ut o P2 volta a rodar até o seu final, rodando por 6 ut e finalizando no instante 23 ut
+			
+			Para mudar os estados (ex: de bloqueado para pronto) é o SO entrando em execução, o que para a execução do processador para o SO apenas, mesmo que 
+				tenha algum processo em execução nesse meio tempo. E é importante perceber que a fatia de tempo não vai parar, ou seja, o processo P2
+				do exercício na verdade não usou os 10ut disponíveis
+		
+		
+		O SO não tem como ter certeza do tempo que vai gastar
+		Nas entrada e saídas, por exemplo, em uma leitura de disco, depende muito da posição do ponteiro etc.
+		Nunca temos garantia
+		Não temos como dar garantia de que vai dar tempo até um certo limite
+		Ou seja, não funciona para processamentos em tempo real
+		
+		* Para tempo real temos aplicação diferentes por conta disso
+		
+		Exemplos de sistema de tempo real:
+			Waze
+			Freio
+			Conta passos
+			
+		Temos os sistemas:
+			* Flexíveis -> não tem tanto problema se perder o tempo
+				Ex: previsão meteorológica que vai tirando foto, se perder a foto não tem mt problema
+			* Críticos -> não pode perder o evento
+				Ex: freio abs, se perder o tempo na hora de acionar pode causar um acidente
+		
+		Exemplos de escalonamento de tempo real:
+			Em um mundo perfeito, cada processo inicia no tempo correto e acaba no tempo correto
+			Na realidade pode acontecer de um ou outro processo dar uma escorregada
+			Nisso temos deadlines, e enquanto o processo não escorregar até passar do deadline está ok, porque tem tempo sobrando
+			
+			Desde que consiga ser executado dentro da deadline tá ok
+		
+		Mas se você quiser algo mais eficiente, ou que rode outros processos, temos algumas ideias:
+			* não temos como rodar no mundo perfeito
+			* temos como priorizar o processo A, aí os processos B vão sendo encaixados nos meios até o próximo processo A, mas nisso pode ser
+				que algum processo não seja executado
+			* podemos priorizar o B, aí os processos A vão sendo encaixados, mas nisso muitos A não são executados
+			
+			* Por conta disso ele trabalha com deadlines, de forma que aconteça o que acontecer vai executar algo, não funciona prioridade em tempo real
+				Aí ele roda o processo com deadline mais próxima
+				
+				Rodamos o processo A, encaixamos o B, rodamos o A2 porque precisava, aí finaliza o B1 um pouco atrasado, roda o A3 e encaixa o B2, chegou o A4
+					e ele encaixa, aí ele precisa acabar o B2 e roda até o final, A5 fica pro final
+				
+				Basicamente ele se vira nos 30
+			
+			O tempo de processamento de cada um divido pela periodicidade precisa caber em um ciclo de execução:
+				Somatório de (tempo de CPU dividido por periodidade (tempo)) <= 1 -> 1 ciclo de processamento
+			Isso precisa ser respeitado para dar tempo e responder a múltiplos fluxos de eventos periódicos
+			
+			Nisso vamos melhorando o que puder, alteramos o tempo, melhoramos a CPU para rodar mais tempo etc.
+			Até que tudo encaixa em 1 ciclo de processamento
+			
+	O escalonamento circular tem vários estados de pronto e funciona
+	
+	Mas como funcionar com vários processadores?
+		1. Cada CPU tem o seu SO privado, cada um roda os seus processos, tem sua sobrecarga etc.
+			Problema: podemos ter CPUs sobrecarregadas e outras ociosas, ou seja, teria como melhorar e distribuir melhor, ser mais igualitário
+		
+		2. Multiprocessador "mestre-escravo":
+			Temos 1 CPU para rodar o SO, ela roda todas as chamadas de sistema
+			Toda hora que precisar de algo depende da CPU 1
+			Ela será a mestre
+			
+			As demais rodam os processos do usuário, já que a principal coisa que deixa um SO lento são as chamadas de sistema
+			
+			Problema: Se cada CPU de usuário pedir algo para o mestre e ir consumindo o tempo da CPU 1, vai chegar uma hora em que a CPU 1
+				vai ficar sobrecarregada, vai começar a dar em gargalo
+			
+		3. Multiprocessador simétrico (SMP - SymMetricMultiProcessor):
+			Cada um executa os processos de usuário e tem o SO compartilhado
+			
+			Para evitar que um processo seja acessado por mais de uma CPU, precisamos travar ele
+			Nisso na memória temos as travas dos processos
+			Isso de travar levou muito tempo
+			
+			O problema não era nem a lógica, era que dependendo da ordem de execução podia dar certo ou não
+			
+			Cada CPU tem as suas máquinas de estado
+			
+			Aì temos uma lista de prioridade de processos
+			
+			As CPUs vão pegando os processos de acordo com a prioridade conforme vão ficando ociosas
+			
+			
+			Temos um algoritmo chamado: Compartilhamento de espaço
+				Ainda não implementado
+				Mas reservas um espaço da arquitetura multicore e agrupa processadores em grupos
+				
+				Aplicações são multi-thread
+				
+				É interessante executar algo multi-thread em paralelo, nisso se são 8 threads, separamos 8 CPUs
+				
+			Isso não é realidade ainda porque geralmente temos até 8 cores, nisso não tem como ficar reservando, não vale a pena ainda
+		
+	
+Threads
+	O SO trabalho com Threads na realidade, não são os processos
+	
+	a main() é a chamada thread 0, a pai/mãe
+	
+	Cada thread recebe um número da mesma forma que os processos
+	
+	O PCB também existe para as threads
+	
+	Temos o TID - Id da thread
+	
+	O SO vai escalonando as threads
+	
+	A partir do momento que elas surgiram, não tinha mais isso de processo
+	
+	
+	Thread: sub-rotina de um programa que acontece em paralelo às outras sub-rotinas
+		a thread de rede não faz a menor ideia da thread da interface
+		
+		Todas elas passam pelos mesmos estados
+	
+	Ex: Editor de texto
+		Temos 3 threads visíveis:
+			* Teclado
+			* Interface
+			* Disco
+		
+		Por isso que podemos digitar, a tela pode travar, mas às vezes aparece depois o que vc digitou
+		
+		Cada Thread tem os seus registradores e pilha, apesar de ser do mesmo código, dados e recursos
+			(seu contexto de hardware, sua pilha de execução (outras chamadas))
+			(mesma área de código, recursos e dados, todas vem do mesmo lugar)
+		
+	Vantagem disso:
+		* É muito fácil trocar informação entre as threads, variáveis globais todas enxergam (apesar de ter um controle para não mexer ao mesmo tempo)
+			Antes disso os processos tinham que usar recursos do SO para isso, ex: criavam arquivos e o outro processo ficava esperando se aparecia algo,
+				quando aparecia ele apagava, aí era a sua vez. Registro é a mesma ideia
+			
+			A melhor ideia era usar um Pipe, uma área de memória compartilhada entre vários processos
+			Isso era o mais eficiente até então
+			Mas mesmo assim era o SO que criava ele, então se perdia tempo
+	
+			Por conta disso é muito bom trocar informação entre as threads por estarem no mesmo espaço de endereçamento
+		* Elas compartilham os recursos entre si
+			Normalmente um servidor Web fica criando os recursos necessários para as threads atenderem os clientes
+			Por conta disso elas individualmente não precisam ficar criando recursos, nem liberando recursos
+			
+			A maioria dos servidores web tem:
+				Thread despachante
+					Threads operárias para cada requisição
+			
+			É fácil criar e instruir uma thread
+				Elas não alocam recursos
+			
+			Só estão lá na casa, já está construída
+			
+			Servidor Web existe graças isso, caso contrário não conseguiria atender a quantidade de requisições de hoje em dia
+		* Se uma thread precisar de uma E/S, ela fica bloqueada sozinha, as demais continuam sendo executadas
+			Antes quando eram processos, uma parte bloqueada parava tudo
+		
+		
