@@ -1,0 +1,137 @@
+CI -> Circuitos integrados
+
+Ao longo da evolução foram crescendo a quantidade de transistores
+Começaram a surgir os SOs e foram evoluindo
+Melhorando os circutos integrados
+Reduzindo os preços
+Processadores foram sendo compartilhados entre os processos
+Surgiram interfaces amigáveis
+Surge a ideia de interligar computadores em redes
+	surgem sistemas operacionais para redes
+Surge a ideia de unir capacidades de processamento entre computadores
+	diferentes através da rede -> sistemas operacionais distribuídos
+	distribuição de processamento, memória etc.
+
+Escala de integração de circuitos integrados nos slides
+Nanotecnologia -> em uma área de nm por nm (10 elevado a -9 meros)
+	conseguiu colocar um transistor
+
+Sistemas operacionais foram evoluindo junto disso tudo
+
+SO:
+	núcleo do sistema operacional -> kérnel
+		principas funções do SO
+	
+	processo -> manifestação física de algo lógico
+	
+	funções do kernel:
+		criação e eliminação de processos e threads
+		gerencia de memória
+		controle dos processos e escalonamento
+		gerencia de entrada e saída
+		suporte a redes locais e distribuídas
+		controle do uso de recursos do sistema
+		segurança do sistema e auditoria
+		gerencia do sistema de arquivos
+	
+	thread -> fluxo de execução
+	
+	SO não é executado de forma linear, sequencial ou com início meio e fim
+		ele pode executar coisas em paralelo
+		de forma assíncrona
+		e fica escutando as coisas como se fosse um loop infinito
+		eventos que podem acontecer a qualquer momento
+	
+Tipos:
+	Monoprogramáveis ou monotarefa
+		executa só um programa, faz só uma tarefa
+		recursos só para aquele único programa
+		
+		entrada, processamento, saída
+		
+		fica muito tempo ocioso esperando alguma entrada
+	
+	Multiprogramáveis ou multitarefas
+		melhor eficiência e performance
+		faz várias coisas ao mesmo tempo
+		
+		processadores antigos estavam na unidade MHz(10 a 6)
+			T = 1 / f -> nisso temos um período de 10 a -6, ou seja, micro
+			por isso tínhamos microprocessadores
+		hoje em dias estão na ordem de G, 10 a 9
+		
+		fazia uma coisa, depois outra
+		eles estão na maior parte do tempo ocupados, fazendo algo
+		
+		dentre eles tinha:
+			sistemas batch
+				batch -> em lotes
+				reúne programas de certa afinidade que são executados
+				tem pouca interação com o usuário
+				está mais ou menos agendado o que vai acontecer
+				
+			sistemas de tempo compartilhado
+				já que agora é possível ter vários programas
+				porque não dividir o tempo para cada programa?
+				vai executando os programas dividindo o tempo do processador
+				dando a impressão de que está executando ao mesmo tempo
+				
+				máquinas com um único processador ainda
+			sistemas de tempo real
+				sistema que responde no domínio do tempo do processo
+				se o tempo é pequeno vai ser uma máquina tremenda
+				se for grande não precisa ser lá aquela máquina
+				o conceito é a ideia de ter um domínio de tempo
+				
+				para monitorar a temperatura não precisa de um intervalo de tempo
+					tão pequeno, não vai mudar tão rápido
+				
+				sitemas para controlar uma máquina de combate precisa responder muito rápido
+				sistema do metro vai monitorando a velocidade em tempo real
+				
+				eles não costumam estar nos computadores pessoais (é outra necessidade)
+				
+	Sistemas com múltiplos processadores
+	
+		executa coisas em paralelo
+		hoje em dia
+		processadores multicore
+		não adiantava mais só aumentar a capacidade de processamento
+		
+		máquinas de múltiplos processadores podem replicar as ideias das
+			máquinas de um único em cada um deles
+	
+
+Arquitetura monolítica
+	Os primeiros SOs eram de arquitetura monolítica
+		ou seja, o sistema operacional inteiro ficava no mesmo código
+		não tinha a ideia de reutilização etc.
+
+	No Linux já tinha uma ideia de ter uma arquitetura mais dividida
+		pensando em reutilizar
+		decisão de projeto
+
+Arquitetura em Camadas
+	Camada Kernel, Executivo, Supervisor, Usuário
+	só mexe em uma camada para corrigir algo
+	mas acaba perdendo desempenho por conta da necessidade das
+		camadas se comunicarem a todo momento
+
+Arquitetura Microkernel
+	vários módulos separados
+	cada coisa em cada lugar, até fora do sistema operacional
+	o código do SO é o mais enxuto possível
+	
+	o micro também foi crescendo com o tempo, já que surgiam novas funcionalidades
+
+Máquina Virtual
+	IBM VM -> para facilitar a transição do monotarefa para o multitarefa
+		o novo sistema conseguia simular o OS anterior, permitindo que os programas
+			passassem pela transição de mercado
+	Java
+	VMWare
+	
+Diferença entre mainframes e PCs
+	Ao passar do tempo não teve diferença
+	quantidade de recursos é maior, mas é administrado da mesma forma
+	o que criavam para um fazia sentido para outro

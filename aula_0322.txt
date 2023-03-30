@@ -1,0 +1,64 @@
+Aplicações em geral tem as pastas:
+	/lib
+	/bin
+	
+Criar pasta C:/temp/FIAPdev
+						/bin
+						/lib
+						FIAPdev.ini
+
+Linguagem C/C++ são usadas nas chamadas de sistema
+Na maioria dos casos não temos muitas possibilidades na criação de arquivo, mas usando as chamadas temos várias maneiras
+A doc da microsoft tem isso -> olhar no main.cpp
+
+PCB -> Estrutura de dados criada para cada processo
+	é nela que os processos armazenam os erros
+	GetLastError(); -> retorna o dado para aquele processo
+	Se não fosse assim poderia conflitar com as milhares de outras chamadas que rodam ao mesmo tempo
+
+
+
+Escalonamento de Processos
+	Algoritmo que serve para distribuir tempo de processamento entre os processos
+	
+	Mais comum é o Circular
+	Eficiente e Justo
+	
+	* Escalonamento Circular = Round Rob
+	
+	Permite que todos os processos tenham chance de ser executado
+	
+	Tratamento de prioridade:
+		Modelo mais simples é ter várias classes de prioridade
+		
+		Classes Prioridade 4, 3, 2, 1 etc. (Da mais alta para a mais baixa)
+		
+		Maneiras:
+			* Para cada 4 vezes rodando a Prioridade 4 ele vai para a prioridade 3 2 ...
+			* Ou ter vários estados de pronto etc.
+		
+	Funções básicas:
+		Manter a CPU ocupada
+		Bloquear o uso de CPU entre processos
+		Tratar prioridade
+		Maximizar throughput
+		Oferecer tempo de resposta razoáveis para aplicações interativas
+		
+Classificações dos Processos:
+	Dois extremos:
+		* CPU-bound
+			Muitas operações aritméticas, cálculos etc.
+			Passa maior parte do tempo no estado de execução, utiliza toda a fatia de tempo disponível
+			Só de vez em quando I/O
+			
+			Ex: Aplicação de engenharia (desenhos, cálculos)
+		* I/O-bound
+			Muitos I/O
+			Passa maior parte do tempo no estado bloqueado
+			Quando acessa a CPU é mais para executar o próximo I/O
+			
+			Ex: Aplicações comerciais, PDV (Ponto de Venda) (Muitos periféricos envolvidos) (Uso de Rede, Leitura por código de barras, 
+				Exibir no monitor, Teclas do Teclado, Envio de Dados, Impressão, Limpar Tela, Baixa na Base de Dados)
+	Em geral os processo vão alternando entre I/O e CPU
+	
+	

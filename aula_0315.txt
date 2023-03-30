@@ -1,0 +1,179 @@
+Uma das ideias do SO é não deixar os usuários mexerem em funções do kernel
+	A partir do windows 7 tiraram o utilitário debug -> usado para encontrar bugs
+	
+	Testes na máquina virtual windows xp
+	
+	debug é uma IDE primitiva
+	
+	permite executar comandos e programar assembly
+	
+	comando r -> mostra o conteúdo dos registradores que representam a execução do debug
+	
+	quando uma linguagem compila um código temos a linguagem de máquina
+	quem que controla as variáveis? quem roda os ifs etc.?
+	
+	nisso temos os registradores fazendo as suas funções
+		AX -> acumulador de operações aritméticas -> soma, mod etc.
+		CX -> contador
+		DX -> faz acesso aos dados, consegue pegar dado do teclado
+		DS -> Segmento de dados, área de dados
+		CS -> aponta a área de memória com as instruções do programa
+		SS -> usado para guardar os desvios, Segmento de pilha, usa quando chama um método e o código desvia para ele
+		BP -> Base, contém os dados de parâmetros, base pointer, contém o retorno etc.
+		
+		DS:SI (Índice origem, source index)
+		SS:SP (Ponteiro de pilha, stack pointer)
+		CS:IP (Instruction pointer)
+		
+		esses outros registradores servem para poder trabalhar com mais memória
+		
+	MS-DOS, Unix
+		Muito baseados em interrupções de sistema
+		Tinha a camada do firmware, permitindo uso do sistema
+		
+		Para cada tipo de computador temos um conjunto de interrupções:
+			Int | Objetivo
+			16h -> teclado
+			10h -> vídeo
+			13h -> controladora de disco
+			1Ah -> relógio
+		
+		Como descobir o uso de uma interrupção?
+			1Ah:
+				temos as funções para usar ela
+				Function 02h
+					Lê o horário atual do CMOS chip
+					Chama usando o registrador AH
+					Retorna:
+						No registrador CH -> horas
+									   CL -> minutos
+									   DH -> segundos
+									   DL -> se está em horário de verão
+		
+		No registrador AX = 0000
+			dois primeiros 0 -> AH (High)
+			dois últimos   0 -> AL (low)
+		
+			Alguns registradores tem essa característica que permitem trabalhar com os bytes
+		
+	comando "a 100" -> a de assembly, 100 de endereço de memória
+		"mov ah,2" -> para rodar a função 02h da interrupção 1Ah
+		"int 1a" -> chamou a interrupção 1A
+		"int 3" -> breakpoint da execução
+		"" -> sai do programa
+		"g=100" -> roda a partir do 100
+		isso vai retornar o horário
+		
+		registradores que terminam com X -> tem H e L (High e Low)
+		CX=2053 -> 20h e 53 min
+		DX=1700 -> 17 segundos sem horário de verão
+	
+		"rip" -> mostra o valor
+		"100" -> vai para o 100
+		"t" -> vai avançando passo a passo
+		"g" -> vai até o final
+		
+		Se rodar o programa na posição 500, o registrador IP vai apontar para o mesmo lugar que apontava no 100,
+			isso porque os programas que ele estava rodando internamente os mesmos programas
+		
+		Toda hora que rodarmos um programa ele vai alterar os mesmos registradores
+		Algo que rode a mesma alteração na mesma sequência vc consegue até deduzir o programa
+		
+	Isso é chamado HW, Contexto de Hardware, contexto de execução dos programas
+	CX = 0010 0000 0101 0111
+			2   0    5    7
+	Isso tudo é voltagem
+			0V      5V/3V
+	é a parte eletrônica
+	sempre fica rodando a mesma alteração no conteúdo dos registradores, o que muda é a região de memória
+	
+Arquitetura x86
+	arquitetura da Intel, família de processadores baseados no Intel 8086
+	Depois começam a surgir patentes Pentium, Xeon
+	não tinha como patentear um número, mas continuam chamando assim
+	
+	O processador pode ser usado para qualquer coisa, mas os da Intel é usado principalmente para uso pessoal
+	
+	Nessa arquitetura temos 8 registradores de uso geral
+	GPR General Purpose Registers
+	6 registradores de segmento
+	1 registrador de flags
+	1 registrador de ponteiro de instrução ou apontador de execução (instruction pointer)
+	
+	GPR:
+		EAX -> acumulador
+		ECX -> contador, usado em loops
+		EDX -> dados, E/S, multiplicações e divisões como uma extensão do acumulador
+		EBX -> base, usado para apontar em outras regiões, parâmetros
+		
+	Se for arquitetura de 32bit EAX
+	64bit RAX
+	Se for 16x AX
+	
+		são de 2^16, como são dois temos 2^32, quase 4Gigas
+		ESP -> apontador da pilha, topo da pilha
+		EBP -> apontador base do frame
+		...
+		Ctrl z -> undo -> funciona porque os registradores vão mandando para outras regiões e trabalham com a cópia
+			se vc se arrepender ele volta para a região anterior
+			A cópia é de tempos em tempos
+			Acontece a todo momento
+		
+		CS -> código 
+		DS, ES, FS, GS -> área de pilha de execução 
+		SS -> pilha
+			
+		Temos o DS:ESI -> índice de origem
+		Temos o ES:EDI -> índice de destino
+		Nisso ele consegue movimentar dados
+		
+		Tem os registradores de flags que indicam o que ele faz depois, se avança na memória ou volta
+		cada valor desse registrador indica algo
+		
+		ZF = Zero -> indica resultado de operação lógica ou aritmética
+		CF = Transporte (Carry)
+		DF = Direção -> incrementa ou decrementa, vai na memória ou volta
+		OF = Overflow -> indica transbordo
+		trabalham com bits
+		... slide com eles
+		
+		Temos os de ponteiro de execução
+		...
+		
+		De acordo com a arquitetura os registradores vão armazenando mais bits
+		RAX -> 63 bits
+		...
+		
+	Para ler uma tecla
+		"a 200"
+		"mov ah,0"
+		"int 16"
+		"int 3"
+		""
+		"g 200"
+		"a"
+	AX = 1E61 = 'A'
+		1E = Scan code
+		61 = ASCII
+		
+	Letra B
+		30 62, ASCII 62
+	
+	(Teclados QWERT -> herança de quando tentaram deixar mais difícil de digitar nas máquianas de escrever para n bugar)
+	
+	"Q" -> sai do debug
+	
+	quando chamamos o debug o IP está no 100, em hexadecimal 256
+	Essas primeiras 256 posições são as entradas da execução, os args do main java
+	256Bytes -> command tail
+	
+Processo:
+	Programa
+	Contexto de hardware -> o que vimos
+	Espaço de endereçamento -> onde vai ficar na memória
+	Contexto de software -> o processo ganha um número lógico, não altera a forma como vai ser executado
+		
+Windows XP -> feito para ser customizado, para sistemas embarcados etc.
+	pessoal usa, porque pode tirar código e tem menos chances de dar problema
+		
+		

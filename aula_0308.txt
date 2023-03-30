@@ -1,0 +1,104 @@
+Powershell -> nativo do windows
+	Tem para Linux e Mac também
+	Trabalha com as principais soluções de máquina virtual -> hypervisor
+	
+	
+	É um shell de lina de comando baseado no .NET Framework
+	Facilitar o dia a dia de profissionais de TI
+		Automatização, controle, administração
+	
+	Multicloud -> trabalha com Azure, Google Cloud, AWS etc.
+	Virtualização -> Hyper-V, vmware, citrix
+	
+	Recursos:
+		Cmdlets
+		verbo-nome -> grande maioria dos comandos são nesse modelo
+		comandos de tipo:
+			get -> ler
+			set -> escrever
+		
+		emulação dos comandos shell cmd.exe
+		muitos comandos dos shells linux, unix
+		acesso às APIs .NET, WMI, COM, Microsoft
+		Usado muito para gerar scripts
+	
+	Powershell se comunica com o SO usando como middleware o .Net
+	
+	Powershell.exe -> console
+	Powershell ise -> para desenvolver scritps
+	
+	Comandos básicos:
+		* Cmdlet (Command-Lets) (verbo-substantivo)
+		* Funções
+		* Scripts
+		* Comandos Externos (nativos do windows/linux)
+		
+	get-date -> padrão com tudo
+	get-date -format d -> simples
+	get-date -format D -> extenso
+	get-date -format t -> horário simples 
+	get-date -format T
+	get-date -format dd/MM/YYYY
+	
+	get-process -name explorer -> acessa o processo explorer
+		mostra quantidade de recursos usados, id, nome, tempo de CPU usado, dados de memória etc.
+			computador usa a ideia de páginas para lidar com os dados na memória RAM (não tem como carregar tudo nela), então vai carregando as páginas que precisa
+		NPM(K) -> páginas que poderiam ser descartadas da memória, pagináveis 
+		PM(K) -> páginas obrigatórias
+		WS(K) -> conjunto de memória com as páginas normalmente usadas para o funcionamento do processo
+		Isso tudo o próprio computador vai analisando e decidindo o que é usado ou não etc.
+	
+	get-process | get-member
+	| -> operador pipe, usa o comando anterior como entrada para o próximo
+	Acessando membros do get-process, o que podemos fazer com ele
+	
+	get-process -name explorer | format-list *
+		formatar uma lista de tudo do processo explorer
+	
+	get-process -name explorer -module
+		mostrar todas as dependências do processo para ser executado
+	
+	.dll -> bibliotecas de ligação dinâmica, forma de economizar memória, windows usa muito
+	
+	(get-process).count -> quantidade de processos
+	
+	$objexp = get-process -name explorer
+	$ -> usar .Net, variável
+	
+	$objexp | get-member
+	$objexp.threads
+	
+	threads -> fluxos de execução, thread 0 é o pai, principal
+		thread -> menor unidade de execução
+		quase tudo hoje em dia é multithread
+		Cada thread tem um TID
+	
+	get-service -> serviços
+	
+	get-service -name win* -> serviço començando com windows
+	get-service -name *net*
+	get-service -displayname *net*
+	
+	Obs: não é case sensitive
+	
+	get-service | where{$_.status -eq "running"} -> "$_ recebe os serviços", só pegando os que estão em "running"
+	
+	get-process | where{$_.workingset -gt 16000000} -> listar serviços que usem mais do que "16Mb"
+	
+	memory leak -> alguns programas podem reservar memória e por algum bug não devolver pro SO, aí depois de um tempo pode acabar a memória disponível
+		esses comandos ajudam a identificar isso
+	
+	get-help get-service
+	get-help get-service -examples
+	get-help get-service -full
+	get-help get-service -detailed
+	
+	get-command -commandtype cmdlet
+	
+	Em situações de inventário de hardware:
+		SystemInfo -> mostra informações do sistema
+		SystemInfo > C:\temp\SystemInfo.txt -> jogar a saída no arquivo
+		ipconfig /all
+		ipconfig /all >> C:\temp\SystemInfo.txt -> anexar informações de IP no arquivo, um só ">" vai escrever em cima
+
+	vários comandos nos slides e apostilas

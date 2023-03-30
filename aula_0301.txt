@@ -1,0 +1,87 @@
+Processo: Programa em execução
+
+Enquanto não é executado é só um arquivo
+
+Cada programa em execução tem um número, PID Process id
+
+Considerando máquinas com 1 processador
+Se tivesse mais seria a mesma ideia mas duplicado
+
+Sistema multitarefa/multiprogramado: habilidade de dividir o tempo de processamento entre vários programas em exec (chaveamento) (sistema de tempo compartilhado)
+
+time slice: tempo de execução de um processo na cpu
+ex: 100ms: para a gente é pouco, nem percebemos, mas para o processador ele faz muita coisa, nisso dá a impressão de que ele está fazendo ao mesmo tempo
+Isso é o pseudoparalelismo ou paralelismo aparente
+para fazer mais de um seria necessário outra cpu
+
+thread: se tem várias, elas vão sendo executadas da mesma maneira
+
+para compartilhar o tempo entre vários processos ele usa os estados:
+Rodando e Pronto (aguardando)
+
+scheduler/dispatcher escalonador de processos: ele que faz isso
+
+Quem está rodando está na CPU, quem está aguardando está na RAM
+
+No meio tempo em que um processo vai de pronto para rodando é o SO rodando e executando as transições
+
+Para tratar prioridades, é como se o processo de alta prioridade tivesse 4 fatias de tempo, enquanto as outras 3, 2 ou 1
+
+Um caso comum é o processo executar durante 20ms e depois ler algum arquivo (que não termina nos 80 restantes), nisso a cpu pode perder 80ms. Para tratar isso as operações de entrada e saída fazem com que o processo entre no estado BLOQUEADO (Esperando entrada/saída, leitura, rede etc.)
+
+1. Processo bloqueado para fazer E/S de dados. SystemCall() (INT SW) Chamada de sistema para o SO se comunicar com a CPU.
+2. escalonador Escolhe novo processo. timer físico que gera INT HW
+3. escalonador entrega novo processo. INT HW
+4. E/S concluída e processo fica pronto (aguardando). INT HW
+INT: Interrupção para o SO fazer algo
+
+Tem mais outros dois estados também: Novo e Término.
+No Novo/Admissão o SO cria uma estrutura de dados para o novo processo
+No Término o SO libera os recursos alocados do processo
+
+Estrutura de um processo:
+Espaço de endereçamento (onde ele está na memória)
+Contexto de software (informação lógica, PID gerado que vai sempre aumentando, o processo não nasce com essa informação, ele adquire naquele instante) (quanta memória pode usar, quantos arquivos pode manipular)
+  três tipos: identificação, quantidade de recursos, permissões
+
+root/administrator é quem tem todas as permissões
+
+Contexto de hardware (à medida que os comandos vão sendo executados os bits são alterados, a tensão é alterada, o conteúdo dos registrados é alterado)
+
+CS: Code segment
+IP: Pointer
+
+registrados no CS x e IP y
+Interrupção executada
+depois roda outro CS IP
+etc.
+
+Estrutura: Programa, endereço na memória, contexto de software e de hardware
+
+A troca de um processo por outro na verdade é a troca de contexto de um pelo outro
+Nisso o de hardware é o que faz apontar para o novo a ser executado
+
+Nessa troca, antes de mudar do A para B ele salva os registradores do processo A e carrega novamente os da B
+Executa o que precisa
+...
+
+Ou seja, durante essa troca é o SO rodando
+
+A fatia de tempo é variável porque o tempo em que o SO trabalha muda, depende muito das características da máquina
+Isso é uma sobrecarga/overhead, porque não é um trabalho útil da máquina, esse tempo não é alterável.
+
+Ex: 20ms para o processo, 5ms do SO. Total de 25ms. 20% de sobrecarga/perda. 5/20 = 20%.
+mas 20% é muito para perder.
+então mexemos no tempo do processo para 500ms, resultando em <1% de overhead.
+Isso pode ser um problema porque atrapalha a noção de multitarefa. (11 processo só seria executado após 5s)
+Por conta disso a fatia de tempo é configurada para cada máquina.
+
+Estrutura de dados criada para cada processo: PCB.
+Lá guarda o estado, conteúdo dos registradores, contexto de software, qtd de arquivos em uso, é o processo pai, se tem filhos, prioridade, pid, nome.
+
+Tabela de processos:
+Rodando->Aponta para um PCB.
+Pronto->Ponteiros para os PCB dos prontos
+Bloqueado->...
+
+Nisso os processos vão sendo movimentados.
