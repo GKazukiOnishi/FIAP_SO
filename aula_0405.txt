@@ -1,0 +1,116 @@
+Na memória RAM
+	1 bit é como um capacitor de um circuito
+	Para o capacitor ser alterado demora um certo tempo
+	Tem até circuitos que ficam repondo os capacitores
+	
+Na memória cache
+	Ele trabalha com um circuito diferente, que é maior do que o da RAM
+	Por isso temos menos
+	Mas ela é mais rápida
+
+Exercício de Thread
+
+	3)
+		15 ms -> trata 1 requisição
+		30 ms -> tempo adicional para acesso ao disco
+		
+		1/3 das requisições acessa o disco
+		2/3 não usam o disco
+		
+		Monothread:
+			1 req: 15ms
+			2 req: 15ms
+			3 req: 30ms + 15ms
+			Total: 75 ms
+			
+			Em 1 segundo = 1000 ms
+			
+			N req: 1000 ms
+			3 req: 75 ms
+			Regra de três
+			N * 75 = 3 * 1000
+			N = 40 req/s
+			
+		Obs: Se uma requisição for bloqueada a thread inteira é bloqueada
+		
+		Multithread: -> cada thread trata uma requisição
+			1 req: 15ms
+			2 req: 15ms
+			3 req: 30ms + 15ms -> não bloqueia tudo
+				{ 15ms + 15ms }
+				Nesses 30ms rodam a quarta e quinta requisição
+			Total: 75ms em 5 requisições
+			
+			5 - 75ms
+			N - 1000ms
+			
+			N * 75 = 5000
+			N = 5000 / 75
+			N = 66.7 req/s
+		
+		Isso tudo para cada núcleo de processador
+
+Hyper-Thread
+
+	Hyper-Threading Technology ou HT Technology (HTT ou HT)
+		hiperprocessamento
+	
+	Cada núcleo consegue rodar 2 threads ao mesmo tempo
+	
+	Isso é a ideia vendida
+	Mas na realidade é diferente
+		Ela realmente tem algumas partes duplicadas
+		Dois conjuntos de registradores por processador
+		Mas de resto só tem 1
+		
+		1. Busca instrução
+		2. Decodifica instrução
+		3. Executa
+		
+		Como a memória é lenta comparada ao processador
+		Nisso eles tem 1 unidade que só busca as coisas da memória e salva no cache
+		Outra unidade processa
+		Aí quando acaba de executar um ele não gasta tempo buscando da memória, ele já tem lá no cache
+		
+		A execução pode estar na 1, mas na memória já pode estar na 5
+		Se tiver um loop, dependendo a instrução que ele for repetir já está lá também
+		Mas pode acontecer de uma instrução tentar avançar para o endereço 1000, aí não estaria carregada em memória ainda, porque a
+			unidade antecipada estaria próxima e não teria até a 1000
+		Aí temos um cache miss na busca e a unidade de execução dá uma engasgada (ela precisa buscar da RAM dessa vez, e precisa recarregar a cache)
+		
+		Aí a intel pensou, porque não rodar outra thread nesse meio tempo?
+		Por isso ela diz que rodam 2, mas na realidade depende das instruções etc.
+		
+	Por conta disso, o ganho na realidade é de 5 a 10% dependendo da aplicação, segundo as empresas que testaram com benchmarks
+	Em aplicações que usam muitas operações aritméticas etc., ganho de até 30%
+	
+Exercício Thread:
+	1)
+		P -> itens compartilhados entre thread
+		T -> Itens privativos de cada thread
+				
+		(P)	Espaço de endereçamento privado.
+		(T)	Contador de programa.
+		(P)	Arquivos abertos. -> recurso
+		(T)	Conteúdo dos registradores.
+		(P)	Variáveis globais. (mesmo local)
+		(P)	Sinais (notificações assíncronas) e tratadores de sinais. -> avisar outros processos. é um recurso
+		(P)	Tamanho máximo do buffer para operações de E/S.
+		(P)	Tamanho máximo de memória principal que pode ser alocada.
+		(T)	Estado.
+		(T)	Ponteiro de pilha.
+		(P)	Espaço de endereçamento compartilhado. (Lembrando do pipe, estrutura que permite que processos compartilhem memória)
+		(T)	Pilha.
+
+		Multithread:
+			Cada thread tem:
+				Seus registradores -> contexto de hardware
+				Sua pilha de execução -> contexto de hardware
+				Cada uma com seu contexto de hardware
+			Elas compartilha:
+				Código
+				Dados
+				Recursos
+			Contexto de software é compartilhado entre todas:
+				Quantidade de memória que pode alocar
+				Qtd de recursos 
