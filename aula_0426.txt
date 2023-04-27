@@ -1,0 +1,98 @@
+Chatbot (chatterbot)
+	Programa que tenta simular um ser humano na interação
+	
+	Dá a impressão de que está falando com uma pessoa e não um programa
+	
+	Muitos são baseados em NLP (Natural Language Processing)
+		subárea da ciência da computação
+		IA, Linguística
+		Estuda problemas da geração e compreensão automática de línguas humanas 
+	
+		Não só texto, mas aúdio também
+	
+	Existem empregos para ser Chatbot Teacher -> ensinar o chatbot
+
+	Histórico
+		1950 - O Teste de Turing
+			ideia não foi implementada, só na teoria
+			máquina indistinguível de uma pessoa
+			
+			Teste de Turing - Pessoa conversando não sabe distinguir se é pessoa ou bot
+		
+		1966 - Elize - Primeiro chatbot
+			saia escolhendo aleatoriamente as palavras disponíveis
+			era fácil de descobrir
+			
+		1972 - Parry - Sem muito avanço significativo, mas com melhorias
+		
+		1988 - Jabberwacky - Implementado após o surgimento dos PCs
+			É considerada a primeira implementação razoável
+			A partir dela foi evoluída
+	
+		1992 - Dr. Sabitso - Primeira Síntese de fala
+			Text To Speach
+		
+		1995 - Alice - Ainda não passou no Teste de Turing (só na subversão bronze)
+		
+		2001 - Smarterchild
+		
+		Surgem então os VoiceBot, compreendem voz falada e comandos
+		
+		2006 - IBM Watson
+			Desenvolvido para um programa de TV Jeopardy
+			Venceu dois campeões (foi até proibido de participar)
+			Tem melhorado em PLN, machine learning, extração de grande massa de dados
+		
+		Cortana, Alexa, Siri etc. empresas começam a criar chatbot particular
+		
+		Bots integrados ao facebook -> vamos usar na aula
+		
+	mindbowser -> site com várias pesquisas de tecnologias, tem uma de chatbot
+	pesquisas mostrando que chatbots vieram para ficar, uso de chatbots, pretenção
+	tem mercados que se beneficiam mais, customer service, sales/marketing, order processing, social media, pagamantos ...
+	
+	Arquiteturas
+		Baseada em fluxos de conversa:
+			FAQ implementado em Bot
+			Menu em que só podemos escolher perguntas pré programadas
+			Se não for algo disponível ele não responde, transfere para atendimento humano
+			Empresas: Chatfuel, Botsify, ManyChat
+				Chatfuel -> integrada ao instagram, whatsapp, facebook etc.
+					até uma certa quantidade de usuários é gratuíto
+		Baseada em NLP:
+			NLP tem como objetivo analisar linguagem humana
+			Máquinas que conseguem encontrar significado correto de mensagens, documentos, vídeos e etc.
+			
+			É possível se comunicar com eles
+			
+			pandorabots.com/mitsuku
+			ganhou competições de Teste de Turing, recordista em deixar a conversa fluir por mais tempo
+			
+			Empresas: Dialogflow, Nuance, IBM Watson (ano passado estava aqui, mas agora está em outra arquitetura)
+				Dialogflow - da Google, por um tempo era equivalente ao Watson
+				Nuance - Relacionado a voz, fornecedora de soluções que atuam no mercado
+		
+		Baseada em Machine Learning:
+			Machine Learning é a uma forma de IA
+			Permite que o sistema aprenda a partir de dados e não via programação explícita
+			
+			A comunicação pode ser melhorada conforme usuários interagem, através do toque de comportamento humano
+			Vai expandindo o dicionário de palavras
+			
+			Trabalha com BigData também
+		
+			replika.ai - Sabe resolver problemas, cvv bom samaritano
+			
+			Empresas: K + TensorFlow, Torch, IBM Watson
+			
+		Criação de Chatbots:
+			Personalidade - Figura que identifica empresa, produto comercionalizado, serviço prestado
+			Funcionalidades - O que vai resolver
+			Treinamento - Treina para saber resolver
+			Desenvolvimento - Evolui, melhora
+			Fluxo de Conversação - Tipos de interação do bot, separar tipos de interação
+			
+		Slides para crar Chatbot usando Chatfuel
+			via Blocos (hoje em dia não tem mais)
+			via Fluxo
+			
