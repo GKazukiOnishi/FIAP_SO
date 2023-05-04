@@ -1,0 +1,59 @@
+Arquitetura baseada em Machine Learning:
+
+	replika.ai
+	hoje temos também compreensão de linguagem natural
+	além do gerador de linguagem natural
+	
+	nisso ele sabe dizer se alguém está bravo etc.
+	
+	tópico que vamos ver nessa aula:
+	
+		Personalidade
+		
+			Vem de uma teoria de psicanálise
+			Identificação de personalidade mais adequada para um produto x de uma empresa
+			
+		Funcionalidades
+			
+			O que vai saber, não sabe tudo, conhece algum assunto específico
+			
+		Fluxo de conversação
+		Treinamento
+			sair treinando, mostrando sinônimos etc.
+		
+Chatbots: Personalidade
+	archein = original ou velho
+	typos = padrão, modelo ou tipo
+	
+	Teoria da psicanálise: (Jung)
+		Conseguimos classificar qualquer pessoa em um conjunto de 12 tipos (arquétipos)
+	
+		slides com explicações
+		
+Chatbots: Funcionalidade
+	Vai falar:
+		Integração com sistemas legados?
+		Integração com ERP?
+		Integração com NLP?
+		Integração com serviços de terceiros?
+		Autenticação?
+		Quais são as regras de negócio?
+		
+Chatbots: Fluxos de Conversação
+	Um fluxo de conversação por funcionaldade?
+	Fluxos alternativos?
+	Quais são os laços necessários?
+	
+	Ferramentas para visualizar o fluxo: MindMup
+
+Dicas:
+	* Chatbos precisam ter um propósito
+	* Crie chatbots especialista, não generalistas
+	* Defina uma persona para o seu chatbot
+	* Chatbots devem se apresentar
+	* Chabots convidam para uma ação
+	* Chatbots sempre enviam uma resposta
+	* Seu chatbot precisa ser personalizado
+	* Chatbots devem ter respostas curtas
+	* Chatbos devem facilitar as coisas
+
