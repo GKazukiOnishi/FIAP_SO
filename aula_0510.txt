@@ -1,0 +1,72 @@
+Chatbots com computação cognitiva
+	Consegue aprender
+	Vai guardando no contexto e aprendendo
+	
+	NLP e NLU
+		Processamento de linguagem natural
+		Compreenção de linguagem natural
+		
+		Consegue entender com palavras trocadas, através de sinonimos, etc.
+		
+	Trabalham com analisador de tom de voz, compreenção de personalidade
+		Tone Analyzer, Personality Insights
+		Se é jovem, adulto, homem, mulher
+		Percebe se a pessoa está angustiada, nervosa, triste
+		
+	Hoje com o google é dificíl de trabalhar com imagens
+	Ao pesquisar imagens de leão o google retorna imagens de leão
+	Ao pesquisar imagens de animais sem ser leão
+		ele continua retornando leão
+		ele acaba não entendendo
+	
+	Quando usamos NLP ou NLU isso pode ser resolvido
+	
+	https://dialogflow.cloud.google.com/#/login
+	
+	Ele funciona com agentes
+	Que por si trabalham com intenção
+		Tentam entender a intenção do usuário
+	
+	Lembrar de configurar idioma, porque vem com expressões pré-programadas
+	
+	Intenções
+		1. Usuário diz:
+			Me explique o filme Thor
+			Como é o filme Thor
+			QUero saber sobre o filme Thor
+		2. Intenção:
+			Saber sobre o filme Thor
+		3. Ação:
+			Retornar informações sobre o filme Thor
+	
+	
+	Basicamente funciona assim:
+		Usuário interage com Agente
+			Agente tenta encontrar a Intenção
+			Intenção retorna uma resposta
+	
+	Também temos:
+		Parâmetros
+			A partir do que o usuário enviar podemos identificar um parâmetro
+			Ex: Nome do filme
+		
+	Caso nada seja reconhecido, tem as respostas default para as intents etc.
+	
+	Ele consegue se integrar com APIs e etc.
+	
+	Entidades:
+		E se o usuário disser "deus do trovão" em vez de Thor?
+		
+		Usuário Diz:
+			Preciso de um voo de Guarulhos para ...
+			Preciso de um voo de GRU para ...
+			Preciso de um voo de Cumbica para ...
+		
+		Sinônimos para o mesmo elemento Aeroporto Internacional de Guarulhos
+	
+	Fulfillment
+		DialogFlow reconhece o nome do filme
+		Orquestrador - Webhook - recebe isso em JSON
+		Orquestrador chama uma API de filmes para obter a resposta
+
+		Nisso conseguimos configurar APIs e sair conectando com as respostas
