@@ -132,4 +132,7 @@ Exercícios
 		p = 0,01^(1/14)
 		p ~ 0,72
 		Espera de E/S máxima de 72%
-		
+	
+Obs: No livro do Tannenbaum tem esses exes
+No livro do SilverShark tem mais coisas práticas, como descobrir x e y
+
