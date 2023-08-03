@@ -1,0 +1,219 @@
+Gerência de Memória
+
+	Depois do processador, a segunda parte mais importante é a memória
+	
+	SO deve gerenciar isso da melhor maneira possível
+	
+	Hierarquia de Armazenamento
+		Classificadas pelas características
+			Tempo de acesso
+			Velocidade de acesso (inversamente proporcional ao tempo de acesso)
+			Custo por unidade de armazenamento (byte) - Quanto mais veloz mais caro, diretamente proporcional à velocidade de acesso
+			Capacidade de armazenamento - Quanto maior o custo menor a capacidade - Inversamente proporcional ao custo
+			
+		Kilobyte de cache
+		Terabyte de disco
+		Gigabyte de RAM
+	
+		Velocidade / Custo por byte de um lado, do outro Capacidade / tempo de acesso
+		
+		Outra forma de classificar
+			Armazenamento interno (dentro do processador) - Acessado diretamente pelo processador (cache, registradores)
+			Armazenamento primário - Acessado diretamente pelo processador (RAM, ROM (só leitura))
+			Armazenamento secundário - Dados dele são movimentados para a primária (RAM) para o processador acessar e usar (Disco rígido, magnético, óptico, fita magnética, memória flash (pen drive))
+	
+		Em ordem de tamanho temos (do menor para o maior)
+			Registradores
+			Cache interna (kbytes, 70 80)
+			Cache externa (hj em dia n tem mais, porque conseguiram colocar dentro (interna))
+			Memória principal (RAM)
+			Disco magnético
+			Unidade de fita e disco óptico
+		
+		obs: cache, em inglês, criado mudo, guarda coisas importantes, trabalha na velocidade do processador (é a ideia)
+		
+		Memória fisicamente trabalha como um capacitor
+		Um semi condutor lá dentro tipo capacitor
+		"Capacitores" com carga são bit 1, sem é 0
+		Mas tudo tem uma certa resistência, então demora um pouco para carregar
+		Por isso memória RAM é de certa maneira lenta
+		
+		Cache é diferente
+		utiliza portas lógicas, transistores
+		aberto/fechado
+		nisso é muito mais veloz
+		circuito flip flop
+		com um circuito de refresh varrendo as posições e colocando energia
+	
+	Memória principal
+		ROM (Read Only Memory) - 99% das vezes que é acessada é só leitura
+			Hoje em dia até dá para alterar, atualizar a BIOS
+			Usada no boot do pc
+			Como é atualizada?
+			
+			A memória tem uma parte fixa, apontando para onde está a parte de boot
+			Ela aponta para P0 ou P1
+			Quando atualizamos a versão nova vai para P1, depois q está tudo certo, a parte fixa aponta para a P1
+			Na próxima atualização reutiliza a P0
+			e vai indo
+			
+			Primeiros tipos era ROM
+			Lá antigamente tinha que mandar para o fabricante alterar a informação, coisa de 2 ou 3 semanas
+			Se desse errado, tudo de novo
+			
+			PROM (Programável, não dá para alterar dps)
+			EPROM (Erasable PROM, ultra violeta deleta dados)
+			E^2PROM (Electrically EPROM, apagável e alterável eletricamente) EEPROM
+			
+			conforme a tecnologia vai evoluindo vai permitindo mais alterações, mil, milhões etc.
+		RAM (Random Access Memory)
+			seus vários tipos nos slides
+	
+	Alocação contínua
+		Antigamente era simples, programa de usuário e SO
+		programa vai usando e é isso
+		se precisar mais coloca mais máquina
+	
+	Técnica da Sobreposição
+		Overlay
+		Como fazer para não precisar colocar mais hardware toda hora?
+		
+		Divido o programa em módulos
+			Principal - na memória o tempo todo
+			Os outros vão alternando na Área de sobreposição
+			Área livre
+			SO
+		
+		A grande ideia foi o intercâmbio das informações
+		Swap
+			Troca de informações entre memória secundária e primária
+	
+	Alocação Particionada Estática
+		Partições podem ter o mesmo tamanho ou diferentes
+		Na config do SO é ditado o tamanho delas
+		
+		Tem a área do SO
+		E as áreas para cada partição
+		Só vale a alteração depois de um boot (por isso estática)
+		
+		No programa era informado onde cada parte do programa deveria ser alocado
+		os programas da época não tinha como colocar a memória em qualquer lugar
+		era absoluto, deslocamento absoluto
+		ex: vai para 200
+		Se colocar o msm programa em outra partição vai dar ruim, vai parar no 200 e lá n vai ter nada q vc espera
+		Os compiladores da época eram assim
+	
+	Alocação Particionada Estática com Realocação
+		Agora dava para ter um registrador base (onde o programa havia sido carregado)
+		e o programa funcionava com base nisso
+		dava para colocar em qlqr lugar
+	
+	Trocaram o nome depois para Alocação Particionada Dinâmica, porque não era estática mais
+	
+	Fragmentação
+		Com programas saindo e entrando na memória, começam a surgir fragmentos e partes de memória livre
+		Se tivesse uma maneira de reorganizar iriam sobrar mais blocos que poderiam ser usados por outros programas
+		Memória fragmentada
+	
+		Soluções:
+			* Aguardar o término de outros programas para liberar mais memória dps
+		
+			* Realocação, usando a ideia de sobreposição usada anteriormente
+				Tirar um programa da memória, colocar no disco, e colocar de volta na memória mas em um lugar mais adequado
+				Técnica Swap, intercâmbio
+	
+				Demora para isso, porque o disco rígido era mt lento, mas era oq tinha na época
+	
+	Como minimizar a fragmentação?
+			* Terceira estratégia de gerenciamento de memória surge
+				
+				Melhores e piores em relação à fragmentação
+				
+				First-fit
+					Sai varrendo a memória, primeiro bloco livre que entrar eu coloco
+					Única vantagem é a velocidade
+				
+				Best-fit
+					Melhor, tenta encaixar certinho
+					Vai colocar em uma região de memória em que, se possível, deixo sobrar a menor quantidade possível
+					
+				Worst-fit
+					Carregar a memória em uma região em que, após o carregamento, ainda sobre muito naquela região
+			
+				O SO que armazena isso, um vetor com memória livre, quantidade, etc.
+				Na best e worst o SO precisa varrer o vetor todo para achar o lugar que sobre mais ou menos
+				
+				Não necessariamente a best é a melhor, e a worst é a pior
+				Para surpresa do pessoal, o Worst-fit dava o melhor resultado
+				Porque após o carregamento sobreva muita memória, e lá entrava outros programas
+				
+				Na best-fit, após o carregamento sobrava cada vez menos, nisso chegava uma hora q entrava nada ou era tão pouco q outros programas n tinham como usar
+			
+				Por isso Worst-fit é a melhor estratégia
+				
+	Querendo ou não, chega uma hora que a memória acaba
+	SO busca justiça e eficiência, da melhor maneira e justa, mesmo tempo
+	Se outro programa quiser ser executado e n tiver mais espaço, sou obrigado a trocar, fazer Swapp IN, mesmo com o disco sendo lento
+	
+	Até que veio uma ideia brilhante
+		Na fatia de tempo do programa, tirando o tempo do Swapp, ajudava quase em nada, porque era cerca de 100ms só fora o tempo para carregar em memória
+		Então fazia tudo isso para só 100ms
+	
+	Nisso surge a paginação
+		
+				
+	Memória virtual
+		Implementações:
+			Paginação - Antiga, mais de 30 anos
+				Até então ninguém apareceu com ideia melhor
+				Mais conhecida e usada
+				
+				No disco rígido temos as diferentes partes de um programa
+				E se a gente dividisse o código em partes menores ainda?
+				Pequenos blocos
+				
+				Qual nome damos? Páginas!
+				
+				Assim o código é divido em páginas
+				
+				E a memória RAM também, é divida em pequenas partes igualmente, mesmo tamanho de página
+				
+				N kB em um, N kB em outro
+				
+				A página é o pedaço de código
+				A moldura de página é o bloco na memória RAM
+				
+				Tudo começa na página com a main()
+				
+				Clicando no programa essa página é executada
+				Nos 100ms da fatia de tempo, nem deu tempo de rodar tudo, mas tudo bem
+				Na próxima aplicação eu carrega a próxima página de outra, aí roda até onde dá, e tudo bem
+				e vai seguindo assim
+				
+				Se em alguma página tiver uma função para um método
+				Aí carregamentos essa outra página em memória
+				
+				O que mudou em relação a antes?
+					Antes era muita memória e desperdiçava a maioria, porque não rodava nem um teco disso tudo
+					Carregava peso a toa
+					
+					Com paginação não, era só pouca parte
+				
+				Ex: Em java tem a lib Math
+					Geralmente ninguém usa
+					As partes disso nunca vão para memória, porque não precisamos
+					Isso graças à paginação
+					Nem precisa estar na sequência
+					
+				* Memória virtual porque uma parte está no disco
+					A sensação que dá é que tem muito mais memória do que temos
+					Porque uma boa parte está no disco
+					Por isso memória virtual
+					Impressão que dá é que começa no 0 e vai até o infinito, até onde dá
+					
+				Muitas páginas
+				Se tem 4 Gb RAM, cada página 4 microB, 10^9 / 10^3 = 10^6 páginas, milhão
+				
+				Discos tem isso, a parte de Swapp memory, usada para isso de paginação
+				
+			Segmentação - 
