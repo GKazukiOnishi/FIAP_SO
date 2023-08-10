@@ -1,0 +1,212 @@
+Memória Virtual
+	Ideia de que a memória de um programa - Dados, pilha, etc. - possa exceder a memória física
+	
+	= Memória Física + Arquivos de Troca (swapp files)
+	
+	Ou seja, uma forma de ter mais memória é ter mais disco, área de swapp files etc.
+	
+	Benefícios
+		* Percepção por parte dos programadores e usuários de que a memória potencialmente disponível é maior que a qtd de memória RAM
+		* Impressão de que começa em 0 e vai ao infinito
+			Para nós desenvolvedores, temos a impressão de que começa em 0 e vai ao infinito, porque o SO dá um jeito
+			Vamos usando ela em pequenas quantidades/porções
+		* Maior eficiência
+			À medida que precisamos usamos
+			
+	Paginação: Técnica em que o espaço de endereçamento virtual é divido em blocos, chamados unidades de alocação, de tamanho fixo e posição fixa,
+		geralmente de pequeno tamanho (4 kB(home) ou 8 kB (servidores)), em que cada um tem um número.
+		De acordo com a aplicação teremos um desempenho maior com uma página de 2kB, outros em 6, etc.
+		A média que encontram para uso doméstico é 4 kB
+		
+	Segmentação: Também tem a divisão imaginária, mas são segmentos. O que vemos em paginação se extende para segmentação
+	
+	Paginação:
+		Basicamente temos no endereçamento virtual (armazenamento secundário), várias páginas por processo
+		Porém no endereçamento real temos algo bem diferente, cada região paginada pertencente a um processo
+		Isso graças ao Swapp
+		MMU
+	
+		Os programas geram endereços virtuais
+		Temos endereço de página e um deslocamento (offset)
+		O endereço virtual com o número dela compõe um endereço base na tabela de páginas do SO e com a ajuda disso consegue encontrar
+			um endereço real
+		O offset é um deslocamento a partir do endereço da página, abrangendo até 4 kB (tamanho da página)
+		
+	Conjunto de trabalho
+		Os programas tem várias partes
+		No início temos variáveis sendo declaradas, conexões, alocação de recurso
+		Tudo isso que fazemos no início é encerrado no final do programa, desalocando, liberando recursos, encerrando conexões
+		
+		Na maior parte do tempo os apps ficam em um loop infinito, while(true), aguardando pelo usuário, requisição etc.
+		
+		Início
+		while(1) {
+			...
+		}
+		Término
+		
+		Seja web, programa, antivirus, serviços etc.
+		
+		As páginas que contém essa parte principal do programa, esse loop que roda toda hora, tem o nome de: Conjunto de trabalho
+		O código principal da aplicação
+		
+		Taxa de Falta de Página
+			A taxa de falta de página em função do tempo, em uma aplicação bem cuidada, podemos perceber que no começo temos muita falta
+			Depois de um tempo vai abaixando até estabilizar
+			
+			No começo temos a função main() carregada
+			E conforme vai indo tem falta de página toda hora, page missing
+			Então toda hora temos que ir buscar no armazenamento secundário
+			No começo tende a ser elevado a falta
+			
+			E vai abaixando conforme vai carregando em memória, até que estabiliza
+			Quando está bem estabilizado, dizemos que esse conjunto de páginas que ficaram são o conjunto de trabalho
+			São as páginas mais usadas
+			
+			Mas sempre tem alguém que usa algo raramente usado, então nunca chega a 0 a falta de página
+			
+			Em algum momento a memória vai lotar, não vai ter mais como colocar mais, então ele acaba precisando tirar umas para colocar outras
+			
+			Ou seja, nunca zera, sempre precisa carregar mais página
+		
+		Esse Swapp é equivalente a uma operação de E/S, igual a uma leitura de arquivo
+		Toda hora que um app está fazendo E/S ele fica bloqueado
+		Ou seja, no começo a aplicação fica em câmera lenta
+		Porque fica o tempo todo bloqueado
+		
+		(faz sentido então o SSD ajudar a iniciar aplicativos, esse tempo de E/S é bem mais baixo)
+		
+		Aplicações menos equilibradas tem uma estabilização de página em valores bem altos de falta de página
+		Ou com vários picos de faltas que não deixam a estabilização acontecer
+		
+		Boa parte da evolução do SO é ajudar a memória a gerenciar isso
+		
+		A questão de programar com módulos, reutilizando
+			Ajuda a entender, manutenção
+			Mas principalmente ajuda a memória, reduz o conjunto de trabalho
+		
+		
+		O momento em que todas os espaços de memórias o jeito é
+			Substituição de Páginas
+				Page out da principal
+				Page in do arquivo de paginação
+				Cópia de páginas, não é uma "movimentação" da memória
+		
+		Mas qual página vão tirar da memória?
+			o melhor cenário seria tirar a página que não será mais usada, só usa no começo, mas não tem como ele saber
+			Então temos algoritmos que tentam chegar perto disso, tentam acertar mais do que errar
+			
+			Se o SO tirar uma página, aí logo dps precisar denovo, ele está fazendo nada, ganhou nada, pagou duas vezes só
+			
+			Estratégias:
+				Aleatório (Random): Não usa nenhum critério. Todas as páginas do conjunto de trabalho tem a mesma chance de serem selecionadas,
+					inclusive aquelas que são usadas frequentemente. Ela consome poucos recursos, mas pouco usada porque é uma PoC de que funciona
+					o Swapp
+				A partir da PoC surgem os algoritmos em si
+				
+				First-In-First-Out (FIFO): Primeiro a entrar, primeiro a sair
+					Tem uma certa lógica
+					Enquanto está no começo, tem espaço ainda, então vai enchendo a memória
+					A primeira a entrar é imaginável que não seja mais necessária
+					
+					Porém as primeiras páginas são do SO, esse é o problema grave dele
+					Porque vai errar mais do que acertar, as páginas do SO sempre serão usadas
+				
+				Vamos então usar o tempo como referência
+				FIFO anotando o instance de tempo em que a página entrou na memória
+				Não precisa ser o tempo real, usa a medida dele, só precisa ter uma contagem qualquer
+					Nisso um valor menor está no passado
+					Um valor maior está mais próximo
+					Nisso ele sabe a primeira página que está lá dentro
+					
+					Tendo essa estrutura de controle, ele pode guardar o instante de visitação dela
+					
+					Algoritmo Least-Recently-Used (LRU)
+					
+					Registrando o instante do último acesso à página, podemos optar por tirar a página com menor instance de acesso
+					Ou seja, faz tempo que foi acessada
+					Então escolhemos a que foi usada há mais tempo
+				
+					Do ponto de vista de substituição é um dos melhores
+					Porém ele é muito caro em consumo de recursos computacionais
+					Ele precisa obter o valor do temporizador do hardware, ou seja, é uma E/S (que apesar de lite, estar próxima da placa mãe)
+					É algo que é executada o tempo todo
+					Então o valor do tempo toda hora é atualizado
+					Além disso, existem diferentes arquiteturas de registro de tempo, tem arquiteturas que usam 64 bits, então é um valor muito caro
+					para armazenar
+					
+					Então o algoritmo não é muito acessível a todos
+				
+				Vamos então tentar medir o uso
+				Least-Frequently-Used (LFU)
+					Usar um contador para saber qual foi menos usado
+					Toda hora que acessar vai incrementando o contador, algo bem simples, i + 1
+					A página com menor contador é a que vai ser retirada, ou seja, a menos usada
+					Um contador alto indica que toda hora está sendo usada
+				
+					Até parece uma boa ideia, mas tem um problema:
+						Não sabe entender o comportamento dinâmico do sistema
+						Qual a seleção que mais ganhou? Brasil, mas hoje em dia isso não indica que é a melhor
+						Quantidade não é a melhor indicação
+						
+						Se alguém usa muito um editor de texto, o contador vai estar muito alto, se usar por 6h, fica altíssimo
+						mas aí o cara acessa um navegador, nisso as páginas do navegador vão sendo substituídas toda hora 
+						Então fica muito ruim, o comportamento dinâmica do sistema não é capturada
+					
+						Até você usar mais do que usou o editor, vai ficar ruim
+				
+				Not-Used-Recenly(NUR)
+					A seleção da página que não foi recentemente utilizada, semelhante a LRU
+					Com uma flag R que indica se foi usada
+					Valor 1 simplesmente
+					Se foi usada a página, tem valor R 1
+					
+					Se você rodou uma página, fica com valor 1
+					Todas as páginas vão ficando 1
+					Qual a ideia?
+					De tempos em tempos resetamos o bit R de todas as páginas
+					Fica tudo 0
+					Depois disso, a página que ainda for importante vira 1 rapidamente
+					Daqui a pouco ela vira 1 de novo
+					Mas aquelas que ficarem com 0, significa que depois do reset ninguém mais usou
+					
+					Mas se temos um milhão de páginas, milhares terão bit 0
+					
+					Então adicionaram um segundo bit como critério
+					Um critério para falar se a página foi modificada ou não
+					Se o conteúdo da sua página na memória for exatamente igual ao do disco, faz sentido trocar com page in e out?
+					Não
+					DLL -> lib do windows, que trabalha com área de dados do programa, só código
+					Ou seja, a DLL só tem código, não fica diferente do que tem no disco, ou seja, não precisa do E/S que seria realizado para tirar 
+					Ela trabalha com a área de dados do programa chamador
+					do disco
+					
+					Temos então o bit M, que indica se a página foi modificada
+					
+					Nisso ele captura o comportamento dinâmico do sistema e evita muitos E/S
+					Mas querendo ou não conforme vai tendo mais páginas não fica tão bom
+					O que fizeram foi adicionar mais bits cada vez mais
+					Adicionando vários critérios que impedissem o empate de bits 1 1
+					
+					Temos o bit de tranca (T)
+					Nós programadores sabemos a página que é mais visitada
+					Sabemos qual é a trasação principal
+					nisso podemos pedir pro SO trancar a página na memória
+					Ele tem um limite é claro, porque não dá certo trancando tudo
+					Mas dependendo da memória física instalada cada App consegue trancar uma certa quantidade
+					
+					Um outro bit muito conhecido
+					Uma página de banco de dados, que tem várias transações sendo realizadas e a transação não foi finalizada
+					Podemos então manter ela em memória enquanto estiver ocorrendo
+					
+					O bit M é resetado quando a página recarrega
+					O app fica bloqueado, a página entra em memória, nisso ela é resetada para saber se foi modificado
+					
+					Durante um tempo essa estratégia foi utilizada, porque consumia pouco, era mais operações lógicas
+					Não tinha ordenação de números de 64 bits nem nada
+					Acontecem empates, mas à medida que temos mais bits é mais difícil, se acontece, fazer o que, tiramos qualquer uma delas
+					Eventualmente sempre erramos, sempre tem uma taxa de falta de página
+					
+					
+					
+					
