@@ -101,3 +101,27 @@ RAM Disk ganhou de todas em usos Sequenciais, Random(512K), Random(4K) e Random(
 Ganhou de forma bem significativa
 Tanto leitura quanto escrita
 Mas é claro, é muito caro, uma disco de RAM inteira
+
+7) Tem-se observado que o número de instruções executadas entre faltas de páginas é diretamente proporcional ao número de molduras de página alocadas para um programa. Se a memória disponível for duplicada, o intervalo médio entre faltas de página também será duplicado. Suponha um sistema com um único processador no qual uma instrução normal leve 2 s (microssegundo), mas se uma falta de página ocorrer, ela levará 2.002 s, isto é, 2 ms (milissegundo) para tratar a falta de página. Se um programa leva 40 s para ser executado, período em que ele terá 10.000 faltas de página, quanto tempo ele levaria para ser executado se existisse duas vezes mais memória disponível? Considere o processo em questão como sendo estritamente CPU-bound.
+
+	Difícil medir com E/S porque o disco depende de muitas coisas para saber quanto tempo vai demorar para ler e escrever
+	
+	Situação 1)
+	tempoExeApp = tempoExeInstrucoes + tempoTratamentoFaltaDePagina
+	40s = tei + 10.000*2ms
+	40s = tei + 20.000ms
+	40s = tei + 10*10^3*2*10^-3
+	40s = tei + 20s
+	tei = 20s
+	
+	Situação 2)
+	São as mesmas instruções, então continua demorando 20s
+	tea = 20s + 5.000*2ms
+	Situação com 2xRAM
+	então temos só 5.000 faltas de páginas
+	tea = 20s + 5*10^3*2*10^-3
+	tea = 20s + 10s
+	tea = 30
+	
+	Então colocar 2x mais memória RAM não reduz pela metade o tempo de execução
+	Tem um custo fixo, o tempo de execução das instruções no processador
