@@ -59,5 +59,21 @@ FIFO com Buffer de Páginas
 	à medida que alguém precisa ser usado, empurra a fila
 	As páginas vão indo pra frente conforme outras entram na fila
 	Quando ela for a primeira da fila
-	Toda hora que uma página é revisitada, ela volta pro final da fila 
+	Toda hora que uma página é revisitada, ela volta pro final da fila
+	Então a página que chega no início é porque não foi usada, então "acho" que não está sendo usada
+	Nisso colocamos ela em outra fila auxiliar menor, uma lista de páginas livres (ainda na memória)
+	Se em algum momento for acessada e ela estiver na fila de livres, ela volta para utilização
+	
+	Ideia de ser um pouco mais eficiente, mas é mais complexo porque tem duas listas
+	Se uma página chegar no início da segunda fila, aí ela sai
+	
+	Vantagem é que se precisar ainda está na memória, a não ser que saia da segunda chance também
+	
+Segmentação - Outra técnica de implementação de memória virtual
+
+	Pouco usada
+	
+	Do ponto de vista de programação faz sentido, já que o programa é divido em partes, segmentos
+	Segmento de pilha, constantes, módulo principal, biblioteca de funções, funções de criptografia, periféricos
+	
 	
