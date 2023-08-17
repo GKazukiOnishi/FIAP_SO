@@ -1,0 +1,63 @@
+Exercícios memória
+
+	3) Um sistema possui 6 molduras de páginas. O momento da carga, o número de acessos, o momento da última referência e os flags R e M para cada uma das páginas na memória são mostrados abaixo.
+		Tabelinhas com dados e controle das páginas
+		Decidir qual será substituída para cada algoritmo
+	
+		NUR - sai página com bits 0
+		LFU - sai página com menos acessos
+		FIFO - sai a página com menor valor de referência, entrou primeiro
+		LRU - sai a página com menor valor de última referência, foi visitada há mais tempo
+	
+	5) Considere a seguinte sequência de referências de páginas:
+
+	07647032747653063065
+
+	Quantas faltas de página irão ocorrer para os algoritmos FIFO e LRU de substituição de páginas, considerando cinco molduras de páginas. Lembre-se que todas as molduras de página estão inicialmente vazias, de modo que a primeira página de cada moldura de página implicará em uma falta de página.
+
+		a) FIFO
+			
+		M0: 0 -> 2
+		M1: 7 -> 5
+		M2: 6 -> 0
+		M3: 4 -> 6
+		M4: 3
+			(vai tirando a página mais velha das molduras, ponteiro apontando para a primeira e andando para frente conforme tira alguma, quando chega no final volta o ponteiro pro começo -> bem simples de implementar e leve)
+		Fp = 9
+		
+		b) LRU
+			(vamos usar o alfabeto como sequência de tempo)
+		M0: 0 (a)(f) -> 6 (l)
+		M1: 7 (b)(e)(i)(k)
+		M2: 6 (c) -> 2 (h) -> 3 (n)(q)(s)
+		M3: 4 (d)(j) -> 0 (o)(r)
+		M4: 3 (g) -> 5 (m)(p)(t)
+			(percebemos que usa consideravelmente os recursos e também acaba falhando, tira página e precisa logo em seguida)
+		Fp (falta de páginas) = 10
+	
+Algoritmo FIFO Circular (Clock)
+	Páginas representadas em uma "circunferência"
+	O ponteiro aponta para a primeira página, a página mais antiga
+	Armazena também os bits R
+	Se ela tiver sido usada, fica lá
+	Vamos para a próxima
+	bit R 0, nesse caso, parece que ninguém mais está usando, então tiramos da memória
+	
+	FIFO melhorado
+	Toda hora que passamos um ponteiro pela página, resetamos o R para 0
+	Nisso nunca acontece de todos os bits R ficarem 1 e o ponteiro dar loop infinito
+	
+	SO Unix / Linux usam ele
+
+FIFO com Buffer de Páginas
+	Usado no Windows
+	Conceitualmente é a mesma ideia, mas é mais complexo de ser implementado
+	
+	FIFO de segunda chance
+	
+	Fila de páginas em utilização
+	à medida que alguém precisa ser usado, empurra a fila
+	As páginas vão indo pra frente conforme outras entram na fila
+	Quando ela for a primeira da fila
+	Toda hora que uma página é revisitada, ela volta pro final da fila 
+	
