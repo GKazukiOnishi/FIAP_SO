@@ -76,4 +76,28 @@ Segmentação - Outra técnica de implementação de memória virtual
 	Do ponto de vista de programação faz sentido, já que o programa é divido em partes, segmentos
 	Segmento de pilha, constantes, módulo principal, biblioteca de funções, funções de criptografia, periféricos
 	
+	O problema é que carregar um segmento na memória é um passo para trás, já que com paginação temos algo bem mais eficiente, pequenas porções de memória que são carregadas só quando precisa, se precisar, à medida que precisamos.
 	
+	Com segmento não, ele carrega o segmento inteiro, carrega o módulo de criptografia inteira, mas será que precisa disso tudo? geralmente não
+	Então acaba usando mais memória, perde tempo carregando muita coisa que não vai usar em E/S, e nem usa tudo no final geralmente
+	
+	Por isso a maioria dos SOs não implementa
+	
+	Aplicações de segurança pode usar, já que acaba sendo um primeiro nível de segurança
+	Já que com isso o SO garante que uma aplicação não invada o espaço de endereçamento de outro
+	Então a memória fica bem mais protegida
+	
+	O problema é que não é muito performático
+	Os sistemas que usam então trabalham com paginação dentro do segmento
+	
+Memória virtual tem mais de 30 anos
+Com o tempo os algoritmos vem melhorando
+Tamanho da página vem sendo ajustada de acordo com as aplicações
+
+RAM Disk -> vem sendo pesquisada, guardar as páginas em uma RAM chamada RAM DISC
+
+RAM Disk x SSD x HDD (Hard disk drive) RAID 5
+RAM Disk ganhou de todas em usos Sequenciais, Random(512K), Random(4K) e Random(4K QD32)
+Ganhou de forma bem significativa
+Tanto leitura quanto escrita
+Mas é claro, é muito caro, uma disco de RAM inteira
