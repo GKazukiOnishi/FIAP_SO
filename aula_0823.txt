@@ -7,4 +7,65 @@ Bibliotecas de Ligação Dinâmica
 	Ligação Estática, ao ligar uma lib, ela vai ser usada, vai precisar ser "carregada", vai ser parte do código binário
 	DLL, ligação dinâmica, pode usar a lib mas ela não vai ser compilada junto, vai ser usada em tempo de execução
 	
+	DLL - Dynamic Link Library
+	No Windows os executáveis são .exe ou .dll
 	
+	No Linux não tem correspondência, mas tem libs com essa ideia
+	
+	O que o compilador faz quando não encontra uma código?
+	Ele coloca em uma tabela que contém os símbolos externos
+	Ele precisa da assinatura só, parâmetros, tipos, nome, retorno
+	
+	Após compilação, uma função ligação estática, o editor de ligação (linker) busca em um arquivo e conecta com o código
+	No caso de uma ligação dinâmica, se ele encontrar uma declaração de external, ele monta uma tabela com isso (Tabela de Símbolos)
+		Nisso quando a aplicação em tempo de execução precisar da DLL, ela carrega (se já não estiver lá).
+		Essas tabelas internas são preenchidas com os endereços dessas funções que estão na memória.
+		Early Bind -> Verifica se encontra na memória todas, garante que está lá, caso contrário dá erro
+	
+	Vantagem: Carrega em memória só uma vez e pode ser compartilhada entre todas as aplicações (só a primeira aplicação que precisar demora um pouco mais)
+		As outras já encontrariam ela carregada
+	
+	Uma outra forma de ser usada, é em tempo de execução, ser buscada e caregar ela.
+		Late Bind -> Carrega só quando precisar, sem verificar na compilação, quando precisa só carrega
+	
+	
+	Basicamente:
+		Estática -> Linker "acrescenta" no .exe a lib, vira uma coisa só
+		Dinâmica -> Avisa o Linker que tem funções externas e que não precisa carregar, pode ser depois
+			Código .exe é um, a DLL está à parte, em outro binário
+		
+	Nisso aplicações que usam DLL, caso ela já esteja lá, economiza memória
+	
+	Obs: DLL não trabalham com dados dele, só recebe parâmetros e faz o que ele precisa fazer, não armazena nada
+		Ou seja, não tem o PageOut também, não precisa ser escrito no disco após sair da memória, ele não vai ser alterado
+	
+	Vantagem: Podemos criar novas versões de DLL com as mesmas funções, e os programas que usam ela não precisam ser recompilados
+		Dá para adicionar novas funções também, e tudo bem
+	
+	Comando PowerShell
+		get-process -name explores -module
+			-> comando retorna os módulos de algo do Windows, se olharmos o resultado a grande maioria é DLL, justamente pela característica de poder ser
+				compartilhada entre várias aplicações executadas
+		
+	Linguagem C
+		Ponteiros
+			int main() {
+				int count = 5;
+				dllExemplo(&count);
+				return 0;
+			}
+			
+			void dllExemplo(int *a) {
+				*a += 4;
+			}
+			
+			& -> no endereço
+			* -> no local apontado pelo endereço -> na declaração mostra que é ponteiro				
+			struct -> estrutura, coleção de variáveis relacionadas
+				struct -> ao ser usado, o computador cria a estrutura e passa o ponteiro para, por exemplo, uma DLL
+			
+			Nisso as DLLs podem alterar os valores sem ter dado nele em si
+			lib time.h -> tem struct tm, com segundos, minutos, hora, dia, mês, ano etc.
+		
+			
+			

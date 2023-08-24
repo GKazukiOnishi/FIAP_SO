@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1692622334 source:c:\users\logonrmlocal\desktop\fiap_so\bibliotecas_de_ligação_dinâmica_v1.6\apptriangulo\main.c
+	<stdio.h>
+	<stdlib.h>
+	<locale.h>
+	<windows.h>
+	"triangulo.h"
+
+1692622170 c:\users\logonrmlocal\desktop\fiap_so\bibliotecas_de_ligação_dinâmica_v1.6\apptriangulo\triangulo.h
+
