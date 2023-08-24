@@ -1,0 +1,10 @@
+Bibliotecas de Ligação Dinâmica
+	Estratégia que permite trabalhar com memória de forma mais inteligente
+	Na época do surgimento do Windows tinha pouca memória, nisso foi necessário e eles usam bastante
+	
+	Economizam tempo para carregar na memória, ficam lá já carregadas e não sofrem alteração, podem ser usadas por mais de um programa
+	
+	Ligação Estática, ao ligar uma lib, ela vai ser usada, vai precisar ser "carregada", vai ser parte do código binário
+	DLL, ligação dinâmica, pode usar a lib mas ela não vai ser compilada junto, vai ser usada em tempo de execução
+	
+	
