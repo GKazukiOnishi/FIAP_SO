@@ -1,0 +1,72 @@
+Sistema de Arquivos
+	Até então, o principal dispositivo de armazenamento secundário são os discos rígidos (HDs)
+		SSDs por serem muito caro ainda não são tão comuns pelo preço, não é produzido em larga escala, então é difícil reduzir o preço
+		Na maioria das máquinas que são vendidas, grande parte são com HD
+	
+	Nisso a maioria dos algoritmos e estruturas de dados que foram evoluindo ao longo do tempo, foram projetadas e melhoradas para possibilitar
+		tirar o máximo de desempenha do disco com suas limitações
+	
+	Disco composto por componentes eletromecânicos etc., que tornam o dispositivo lento, depende do movimento
+	
+	Por conta disso temos várias técnicas que surgiram para possibilitar tirar o máximo de desempenho dos discos
+	
+Arquivos: unidades que contêm conjuntos distintos de dadaos que são utilizados pelos processos
+	podem ser de texto ou binários
+	
+	Texto -> inteligíveis para nós, abrindo com notepad podemos ler, podemos gerar, editar, criar, ler
+	Binário -> precisamos de uma app específica capaz de entender a formatação do arquivo
+		nisso a maioria esmagadora são desse tipo
+		a extensão do arquivo acaba ficando associada ao formato do binário
+		.doc, .xls, .ppt, .pdf, .exe (quem entende é o SO)
+	
+Sistema de arquivos: Módulo do SO, subsistema -> que permite trabalhar com arquivos
+	controla as operações realizadas com arquivos
+
+	* Métodos de acesso -> formas de acessar arquivos
+	* Gerenciamento de arquivos -> mecanismos para fazer backup, compactar, criptografar, compartilhar, aplicar regra de compartilhamento etc.
+		permissões etc.
+	* Mecanismos de integridade -> deixar o arquivo íntegro ao longo do tempo
+
+	Deve permitir:
+		* Criar, modificar, eliminar arquivos
+		* Compartilhar
+		* Recuperação
+		* Procedimentos de segurança
+		* Execução das operações pelos nomes simbólicos dos arquivos de maneira independente do dispositivo utilizado
+			(internamento o file tem um ID, mas para a gente entender associamos um nome)
+			(cumpre a função do SO de abstrair a complexidade do hardware de forma mais fácil aos usuários)
+			(pode ser um pendrive, servidor remoto, disco, acontece da mesma forma independente do dispositivo físico que contenha o arquivo)
+	
+	Camadas do sistema:
+		Esses são mais lógicos
+		* Módulo de diretório: relaciona nomes e arquivo com IDs de arquivo
+			diretório é um arquivo, mas de um tipo especial, que relaciona nomes com IDs
+		* Módulo de arquivo: relaciona IDs de arquivos com arquivos em particular
+		* ... controle de acesso: se pode executar operação em arquivo, permissões
+		* ... acesso a arquivo: lê ou escreve dados ou atributos no arquivo
+		Os dois últimos são os que variam por dispositivo físico
+		* ... bloco: acessa e aloca blocos de disco
+			Obs: periféricos podem trabalhar com caractere (menos coisa, ex: teclado), mas os discos trabalham com blocos (múltiplos de 2^n, 512, 4096 bytes)
+		* ... dispositivo: de fato faz a interface com outra parte do SO, parte de gerenciamento de dispositivos de E/S
+	
+	Atributos de arquivo:
+		Tamanho
+		Data de auditoria (acesso, modificação, criação, alteração de atributo)
+		Quantas aplicações trabalham com ele
+		Proprietário
+		Tipo (texto, binário e seus tipos)
+		Lista de controle de acesso (quais usuários/grupos podem trabalhar com ele e com quais operações)
+			xrw, executar, ler, escrever -> xrw-xrw-xrw
+	
+	Cada SO com seu sistema nativo ("principal"):
+		Sistema de arquivo que o SO investiu mais
+		Pode entender outros, mas o nativo é um determinado
+		
+		MS-DOS -> FAT (File Allocation Table)
+		Windows 95/98 -> FAT (mantendo compatibilidade) e VFAT (Virtual FAT)
+		Windows NT... -> FAT, VFAT e NTFS (New Technology File System)
+		Windwos 8...11 -> NTFS, ReFS (Resilient File System)
+		Linux -> FAT, VFAT, Minix, Extended FS, ext2 (second extended FS), ext3, ext4 -> entende vários porque surge depois
+		
+		
+		
