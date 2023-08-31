@@ -68,5 +68,145 @@ Sistema de arquivos: Módulo do SO, subsistema -> que permite trabalhar com arqu
 		Windwos 8...11 -> NTFS, ReFS (Resilient File System)
 		Linux -> FAT, VFAT, Minix, Extended FS, ext2 (second extended FS), ext3, ext4 -> entende vários porque surge depois
 		
+Disco Rìgido
+	HD, nome oficial HDD (Hard Disk Drive)
+	
+	Disco é na verdade:
+		formado por uma pilha de discos, que chamam de pratos
+		Em um eixo temos uma série de pratos
+		E é possível gravar e ler informações de cada um dos pratos
+	
+	Sobre o tempo de leitura
+		Tl = Te -> Tempo de leitura = Tempo de escrita
+	
+	Para poupar gasto elétrico do motor do eixo do disco, ele costuma estar em repouso
+	E quando precisamos, ele precisa atingir a velocidade rotacional nominal de trabalho
+	
+	Para alcançar isso e poder responder, leva um tempo, um tempo de latência rotacional
+		Tln
+	
+	Motor AC comum de rotação
+	
+	Os pratos, de maneira imaginária, é dividida em trilhas
+	E os braços mecânicos sustentam as cabeças de leitura e escrita, de forma que eles não encostam nos pratos
+	São eletromagéticos
+	Eles são extremamente precisos, porque cada passo é extremamente preciso, então eles se deslocam ao longo da superfície
+	Para se movimentar de uma trilha a outra (+ interna ou externa), leva um tempo de procura
+		Tseek -> para a grande maioria dos discos, vale 6ms
+	
+	Os braços tem um par de cabeças de leitura e escrita, pensando nisso, um braço entre dois pratos faz algo nos dois?
+	Na verdade não, porque eles são específicos para seu prato, para possibilitar executar outras operações nos outros pratos
+	
+	De maneira imaginária, assim como temos trilhas, temos os setores (setor geométrico)
+		trilha -> área da circunferência com uma certa largura
+		setor -> pedacinho de uma trilha separada
+	
+	Disco trabalha com um número múltiplo de 2^n de cluster (bloco de alocação)
+		então ocupa 2 ou 4 setores
+	
+	E se vermos a imagem, temos que setores mais longes do centro são maiores que os mais próximos
+	Então cabe mais na parte mais externa? Sim!
+	
+	Trabalhar com setores de tamanhos diferentes seria muito complexo para o software e também parte eletrônica
+	Então limitaram o tamanho do bloco pela quantidade de bytes que conseguem salvar nos menores setores
+	Então trabalhara com 512 bytes
+	Mas hoje em dia aumentaram para 4096 bytes
+	
+	Conjunto de setor (múltiplo de 2^n) é chamado de cluster
+	E um conjunto de trilhas sobrepostas em todos os pratos, chamado de cilíndro
+	
+	Todos os braços ficam acoplados em um outro braço único sustentador, que também se movimenta
+	Quanto menos ele se movimentar melhor
+	
+	Como usar os espaços do disco para isso?
+		Usamos primeiro toda a circunferência externa imaginária
+		Depois usamos a parte de baixo do primeiro prato
+		Depois a parte superior do próximo prato
+		Depois a parte inferior desse prato
+		...
+		Quando todos os setores das trilhas mais externas (0), de todas as superfícies
+		Somos obrigados a dar uma passo para dentro e temos o tempo de procura (Tseek)
+		Por isso temos nomenclatura de cilindro
+	
+	Dentro dos pratos, temos vários pequenos ímâs chamados domínimos magnéticos
+	Que começam todos alinhados aleatoriamente
+	
+	Conforme a leitora/escritora trabalha, eles são alinhados magneticamente, representando 1 ou 0
+	Para ler ou escrever, passa pelo mesmo lugar, e o motor não fica invertendo, então ele gira de qualquer forma
+	Tl = Te por isso
+	Poderia girar mais rápido? Sim, mas a eletrônica não vai conseguir acompanhar
+	Costuma trabalhar com 10.000 ou 20.000 rotações
+	Então seria necessário eletrônica melhor também, deixando mais caro
+	
+	Para a cabeça de leitura não interferir na de escrita, tem uma blindagem
+	A corrente elétrica passa por uma bobina, gerando campo magnético e polarizando os ímãs
+	
+	Leitura é a aplicação da lei de faraday, que diz que se um circuito fechado for atravessado por um campo magnético, vai gerar uma tensão que
+		vai opor o fluxo magnético
+		Vai acabar gerando uma tensão na cabeça de leitura, e causar uma tensão em um fluxo ou outro
+		Nisso podemos recuperar a polarização
+	
+	Como saber se é 0 ou 1?
+		Temos um ímã referência, e se dele para o próximo manter o sentido magnético, é bit 0, se alterar é bit 1
+		Então depende da referência inicial
+	
+	Portanto
+		Tl = Te = Tln + Tseek + Ttf (tempo de coleta/impressão dos bits, que tem relação com a velocidade de rotação do disco)
+		
+Exercício
+	1) 
+		Tseek = 6ms, por trilha ou cilindro
+		
+		Situação 1
+			Distância média entre 2 blocos logicamente consecutivos = 4 trilhas
+		Situação 2 (SO tentou agrupar melhor os dados)
+			Distãncia média entre 2 blocos logicamente consecutivos = 2 trilhas
+		
+		Tl = Tln + Tseek + Ttf (transferência)
+		
+		Situação 1:
+			Tln = 50ms
+			Tseek = 6ms * 4 (4 trilhas) * (100 (qtd blocos) - 1 (porque a primeira operação de seek é gratuíta, braço vai sendo movimentada enquanto está tentando atingir a rotação nominal)) = 2.376 ms
+			Ttf = 100 (qtd blocos) * 25 (tempo no bloco) = 2.500 ms
+			Tl = 50 + 2.376 + 2.500 = 4.926 ms
+			
+			%Tseek = (2.376 / 4.926) * 100% =~ 48,23%
+			Tseek é importante porque é a parte que o SO pode melhorar, os outros é coisa do hardware
+			Ou seja, colocar os blocos mais próximos melhora o tempo de seek, é algo que o SO consegue fazer
+		
+		Situação 2:
+			Tln = 50ms
+			Tseek = 6ms * 2 (2 trilhas) * (100 (qtd blocos) - 1 (porque a primeira operação de seek é gratuíta, braço vai sendo movimentada enquanto está tentando atingir a rotação nominal)) = 1.188 ms
+			Ttf = 100 (qtd blocos) * 25 (tempo no bloco) = 2.500 ms
+			Tl = 50 + 1.188 + 2.500 = 3.738 ms
+			
+			%Tseek = (1.188 / 3.738) * 100% =~ 31.78%
+		
+		Ou seja, melhor caso possível é ter todos os blocos contínuos, sem distância de setor entre eles
+		Alocação contínua
+			Se fossem 10 blocos com alocação contínua, seriam percorridas só 9 trilhas
+			Distância de 1 trilha só
+			
+			6 * ((100/10) (porque são 100 blocos, 10 blocos em cada trilha, todos contínuos, então não teve mais que percorrer 1 por 1) - 1)
+			temos nisso um valor muito muito menor
+			6 * 9 = 54 ms
+		
+Alocação Contínua
+	um diretório tem os arquivos com seu início e tamanho
+	
+	o SO vai tentar deixar o arquivo inteiro na mesma trilha, juntos
+	Para reduzir a quantidade de seek necessárias
+	
+	Se um disco for uma sequência de blocos, eles são consecutivos na superfície de disco
+	O controle é mais simples porque é só pegar onde começa e o tamanho
+	Operações mais performáticas
+	Porém tem problemas, ao apagar um arquivo, fica fragmentado essa alocação, começam a aparecer espaços de blocos livres
+		Ao aumentar um arquivo, ele vai acabar sendo jogado em outra parte livre da trilha (e até ele vai ter várias operações de seek)
+			(diminuir até tudo bem)
+	E, arquivos mudam o tempo todo
+	Pessoas tinham que estimar o tamanho em que cada arquivo cresceria nos mainframes
+	
+	
+	
 		
 		
