@@ -1,0 +1,123 @@
+Disco Rígido
+
+	Tl = Te = Tlr + Tseek + Ttf
+	
+	Tseek -> SO consegue melhorar
+		Se alocar de forma contínua reduz o tempo de seek, porque vão estar próximos os dados
+		
+		O problema da alocação contínua é na edição/remoção de arquivos
+		Isso cria fragmentações que torna a alocação contínua não tão eficiente, porque vai gerando buracos que não seriam capazes
+			de aproveitar os benefícios da alocação contínua, podendo piorar também, porque novos arquivos ou partes de outros acabam ficando mais longes
+			eles acabam lá no final
+		
+		Então não ajudava muito um usuário comum, que altera arquivos a todo momento
+	
+	Alocação não contínua
+		1. Trabalhar com uma lista ligada de setores
+			Os setores se apontam entre si, armazendo além da informação, um ponteiro para o próximo setor
+			Isso até chegar no EOF = -1 FFFFh
+		
+			Quais as vantagens?
+				Não tem problema com a edição/remoção/adição de arquivos
+				Porque os blocos não se importam com a ordem de alocação
+				
+				Isso resolve o problema da fragmentação, pode usar todos os blocos disponíveis
+			Desvantagens?
+				Não tem como sabe quais setores formam o arquivo enquanto não ler cada um dos blocos que comporem ele
+					(não há acesso randômico)
+				O tamanho do bloco deixa de ser uma potência de 2 (2^n), os blocos são carregados em memória de formas soltas, sem ter relação
+					Depois o SO precisa ir limpando, então interfere na performance ao longo do tempo
+		2. Lista ligada de setores indexada
+			Tem um bloco de índices que indicam os blocos que formam o arquivo, ao invés de ficar em cada bloco
+			Nisso podemos ter um algoritmo que recupera as informações fora de ordem, mas sem movimentos desnecessários do braço e carregamento fragmentado
+			Depois ele arruma a ordem do arquivo
+		
+			Isso é chamado de Tabela de Alocação de Arquivos (FAT - File Allocation Table).
+			A Microsoft usou esse mesmo nome do algoritmo para o sistema de arquivos
+			
+			Todos os sitemas de arquivos partem dessa ideia básica
+			
+			Essa tabela é assim:
+				Tem várias linhas numeradas
+				O diretório -> arquivo de controle gerenciado pelo SO para determinar onde estão os blocos de um arquivo
+				Nesse arquivo de diretório vão ter informações dizendo onde estarão o início de cada arquivo
+				Na linha indicada, vai ter a próxima linha indicando o outro setor
+				No outro vai ter o outro ...
+				
+				Então é uma tabela não ordenada, mas que os índices falam como eles se conectam entre si, vai indo de um em um nessa tabela
+				E nisso sabemos quais setores formam o arquivo
+				
+				(O SO formatado trabalha com clusters, conjunto de blocos)
+				
+				Nisso no arquivo de diretório temos o início do arquivo, o setor inicial
+				Sabendo o início, vamos na tabela de alocação
+				Nessa tabela recuperamos todos os setores do arquivo
+				
+				Com isso temos como melhorar e reduzir o tempo de seek
+			
+			Problema:
+				Essa tabela FAT tem um tamanho considerável
+				No boot precisa carregar essa tabela inteira para acessar os arquivos necessários
+				Mas o disco em si já é lento
+			
+			Não precisa salvar tudo nessa FAT, podemos priorizar e colocar os arquivos mais acessados
+			
+			Para evitar problemas, tem várias cópias inclusive (3)
+			
+	Modelo Lógico
+		Bloco de alocação (cluster, 2^n setores)
+		Vamos considerar que um deles vale 512 bytes (hoje em dia é mais)
+		
+		Tabela de representação do disco rígido
+			Apontando para um pedacinho do disco
+			
+			Com a quantidade de linhas dessa tabela precisa representar o disco inteiro
+			
+			TamanhoCluster = TamanhoDoDisco / nº de linhas da tabela
+			
+		Com 12 bits => 2^12 = 4.096 linhas
+		
+		TamBa = disco / 2^bits
+		
+		TamBa = disco / 2^FAT
+			FAT 12 -> 12 bits
+			FAT 16 -> 16
+			...
+		
+		2^n porque trabalha com binário o sistema
+		Então a tabela armazena até 2^n
+		
+		Inicialmente (época do FAT12), cada linha na tabela representava 4kB
+		
+		Cada arquivo fica em uma linha, mesmo não ocupando tudo, no mínimo uma linha por arquivo
+		
+		se o arquivo tiver 4 bytes, mesmo assim vai ocupar o espaço de um bloco de alocação (4 kB)
+			Temos então uma fragmentação interna
+		
+		Até então era aceitável
+		Com o tempo os discos passavam a ter maior capacidade, então o desperdício ia aumentando
+		
+			TamBa (bloco de alocação) = disco / 2^bits
+			Se o disco aumenta, bloco de alocação também, tabela precisa aumentar também
+			
+		Então surgiu o FAT16 para alocar mais bits para representação da tabela
+		
+		Então ficava nessa, um aumentava, o outro aumentava
+		
+		Os blocos iam aumentando conforme o disco também ia
+		Mas então mudaram o paradigma
+		
+		Dado um tamanho de disco e o tamanho do bloco, construímos uma tabela para você
+			2^FAT = disco / TamBa
+		
+		Então agora tinha uma quantidade de bits variável para cada capacidade de disco, cada tamanho de bloco desejado
+		
+		Isso foi até o FAT64, que não indica que vai usar tudo, mas que vai pelo menos manter o tamanho do bloco que o usuário quiser
+		
+	Foram feitos estudos, e chegaram que 4kB era suficiente para máquinas de usuário
+	Se for servidor, pode ser 8kB
+	
+	Agora com o SO sabendo qual tamanho de bloco usar, acessando a controladora para descobrir o tamanho do disco
+		Ele calcula o tamanho da tabela sob medida
+	
+	
