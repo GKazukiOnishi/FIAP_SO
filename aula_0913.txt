@@ -90,5 +90,12 @@ Disco Rígido
 	
 	Geralmente esse tamanho é de 4 bytes, de forma que acaba consumindo uma quantia considerável de memória no carregamento dessa tabela
 	
+Agora que temos essa tabela
+	Só não resolvemos o problema da alocação contínua, que era mais eficiente
+	Mas agora que temos a tabela, porque não ajustamos para os blocos ficarem mais próximos?
 	
+	Isso é o que chamamos de desfragmentação do disco no SO
+	
+	v1 - roda a desfragmentação e os arquivos ficam organizados e roda bem
+	v2 - toda hora que algum arquivo é alterado, a desfragmentação roda para tornar contínuo
 	
