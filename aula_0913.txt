@@ -1,0 +1,94 @@
+Disco Rígido
+	Tl = Te = Tlr + Tseek + Ttf
+	
+	FAT
+		Tabela de índices que apresenta onde as partes do arquivo estão
+		Indica onde está fisicamente o setor do arquivo e também logicamente dentro da tabela, nisso pode-se ir navegando na tabela
+			e sabendo onde está fisicamente
+	
+	Disco Rígido - Modelo Lógico
+		Dividir o disco rígido em vários blocos de alocação, que são um cluster ou 2^n setores
+		
+		Tabela de representação do disco rígido é o modelo lógico, a FAT
+		Que vai ter o seu índice como o número do bloco de alocação
+		
+		Tamanho do bloco da alocação por dedução é:
+			TamanhoBlocoDeAlocação = TamanhoDoDisco / nºlinhasDaTabela
+			TamBa = Disco / Linhas
+			
+			Quantidade de linhas de uma tabela depende da quantidade de bits para endereçar a tabela
+			com 1 bit, 2 linhas
+			2 bit, 4 linhas
+			12 bits, 2^12 = 4.096
+			16 -> 65.536 linhas
+			
+			TamBa = disco / 2^FAT -> FAT porque o nome da tabela FAT contém a quantidade de bits usados para o tamanho da tabela em linhas
+			FAT12 -> 12 bits
+			
+		Capacidade do Disco Rígido
+			Conversão SI <> SO (Forma como o mundo trabalha em comparação com a forma como o computador trabalha)
+			
+			SI - Sistema Internacional de Unidades
+				Trabalha com múltiplos de 10
+				Então 1 GB, são 1.000.000.000 de bytes
+				Mas no computador, temos um sistema binário, então o mais próximo disso seria 1.024 x 1.024 x 1.024 bytes, 2^30
+			
+			Nisso temos um fator de conversão
+			
+			1GB = 1 * (1000 / 1.024)^3 = 0,93132 GB
+			1TB = 1 * (1000 / 1.024)^4 = 0,90949 GB
+			
+			à medida que vai aumentando a unidade, perdemos uma certa quantia de memória
+			Isso tudo para conseguir representar o disco como 2^algumacoisa
+			
+			Por isso nunca temos o Giga inteiro de memória
+			
+		TamBa = 2^n / 2^FAT
+		2^n = disco -> porque só é representável em binário
+		
+		
+		A exemplo do FAT12, temos 12 bits para representar a linha
+		O menor arquivo que pode-se armazenar é o tamanho disponível para uma dessas linhas
+		Para um desses blocos de alocação
+		Então se vc tivesse muitos arquivos leves, menores do que 4kB que é o tamanho do bloco para FAT12, acabamos tendo uma fragmentação interna
+		
+	Fragmentação interna
+		Até então não era um grande problema, não tinha tantos arquivos leves assim
+		Obs: Antes do disco rígido eram discos flexíveis
+		
+		Mas o que aconteceu é que confome a capacidade dos discos aumentava, a tabela mantinha, portanto o tamanho do bloco de alocação aumentava
+			também
+		
+		TamBa = disco / linhas
+		
+		E nisso a fragmentação interna aumentava cada vez mais, começaram a perder muito
+		
+		Então mudaram o ponto de vista
+		
+		ao invés de
+		TamBa = disco / 2^FAT
+		Usaram
+		2^FAT = disco / TamBa
+		
+		Quebra de paradigma, porque até então a tabela era fixa, o FAT era fixo, e o disco aumentava e nisso o bloco aumentava também
+		
+		Agora, o sistema SO pergunta para o usuário qual tamanho de tabela você deseja, porque o FAT será alterado, o tamanho do bloco será fixo e
+		 o tamanho do disco será fornecido, falta só o FAT para calcular
+		
+		Nisso agora o SO sabe calcular o tamanho da tabela (sob medida) a partir do tamanho do bloco e do disco
+		
+		Como o padrão de PC era 4kB para o TamBa, para servidores era 8kB
+		O SO passou a determinar o FAT/quantidade de bits da tabela para então ter o tamanho de bloco desejado
+		
+		Hoje o limite é o FAT64
+		
+		Nos exercícios será FAT32, então a ideia é ficar entre 1 e 32
+	
+	Tem uma outra questão, qual o tamanho do valor a ser armazenado na tabela?
+	Com um único byte, representaria até um valor limitado de blocos
+	Nisso esse tamanho importa também
+	
+	Geralmente esse tamanho é de 4 bytes, de forma que acaba consumindo uma quantia considerável de memória no carregamento dessa tabela
+	
+	
+	
