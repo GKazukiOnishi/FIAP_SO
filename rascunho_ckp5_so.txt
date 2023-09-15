@@ -1,0 +1,60 @@
+Tl = Te = Tlr + Tseek + Ttf
+
+Disco opera em
+	7.200 rpm
+Taxa transferência
+	160 MB/s
+Arquivo biométrico
+	Tamanho de 8 kB
+Tempo de posicionamento do braço do disco
+	3 ms
+
+Cálculo da Latência Rotacional
+	Tempo para completar 1/2 volta no disco
+	Dado que 7.200 rpm
+	7.200 voltas/min
+	
+	7.200 voltas/60 s
+	7.200 voltas/60*1000 ms
+	
+	7.200 voltas/60.000 ms
+	0,12 voltas/ms
+	
+	0.12 = (1/2) volta / Tlr ms
+	Tlr = (1/2) / 0,12
+	Tlr = 0,5 / 0,12 = 4,166667 ms
+	
+	
+	Tlr = 4,17 ms
+
+Tempo de seek / posicionamento
+	Tseek = 3ms
+
+Para 1 arquivo biométrico:
+	Cálculo do tempo de transferência
+		160 MB/s = tamanhoArquivo / tempo
+		160*1000 kB/1000 ms
+		160 kB/ms
+		
+		160 = 8 / Ttf
+		Ttf = 8/160 = 8/(8*2*10) = 1/20 = 0,05ms
+
+	Portanto
+		Tl = Te = 4,17 + 3 + 0,05 = 7,22 ms
+		Para ler e escrever um arquivo, temos duas vezes o tempo, então 14,44 ms
+
+Tempo para desfragmentar um disco de 4 GB
+	Cálculo do tempo de transferência
+		160 MB/s
+		160/1000 GB/1000 s
+		
+		160/1.000.000 GB/ms
+		0,00016 GB/ms
+		
+		0.00016 = 4 / Ttf
+		Ttf = 4/0,00016 = 25.000 ms
+	
+	Para desfragmentar é necessário ler todos os 4GB e então escrever novamente os 4GB
+		Tl = Te = 4,17 + 3 + 25.000 = 25.007,17 ms
+		Portanto para desfragmentar é necessário 50.014,34 ms = 50s aproximadamente
+	
