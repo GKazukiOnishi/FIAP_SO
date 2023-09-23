@@ -1,0 +1,58 @@
+Exercícios
+4) Tabela FAT para interpretar
+	começo contém o seguinte: x, x, -1, 8, -1, 7, 10, 3, 13, 0, 5, -1, 0, 2, 0, 0 ...
+	x -> irrelevante
+	-1 -> fim de arquivo (EOF)
+	
+	Arquivo de diretório indiciando um arquivo iniciando em 6 como bloco inicial, quantos blocos ele tem?
+	
+	x, x, -1, 8, -1, 7, 10, 3, 13, 0, 5, -1, 0, 2, 0, 0 ...
+	0  1   2  3   4  5  6   7  8   9 10  11 12 13 14 15
+	
+	Arquivo nas posições: 6, 10, 5, 7, 3, 8, 13, 2, EOF
+		Portanto o arquivo é composto por 8 blocos (+ 1 EOF)
+	Obs: Quando alguma parte do caminho é corrompida ou perdida, temos um arquivo corrompido, loops indicam isso
+		Por isso mesmo o SO armazena 3 cópias em regiões diferentes
+			X -> algumas linhas da FAT é usada pelo SO
+					quando dá boot no PC ele vai testando, carregando, até transferir pro SO
+						a BIOS transfere para outro código, master boot record (fixo), que fica nas primeiras regiões do disco
+			DualBoot -> dois boot records
+		
+10) 
+	2^FAT = 2^n / tamBloco
+	
+	Disco com 8 GB, usando 4kB para cada bloco
+	Cada entrada na FAT ocupa 4 bytes
+	
+	Disco / tamBloco é a resposta
+	8GB / 4kB = 2^3 * 2^30 bytes / 2^2 * 2^10 bytes = 2^33 / 2^12 = 2^21
+	
+	2^FAT = 2^21
+	FAT21 -> 21 bits para endereçar a tabela
+	
+	Como temos 21 bits para endereçar a tabela, cada linha com 4 bytes, no total podemos dizer que:
+	Tamanho da tabela de alocação resulta em 
+		2^21 linhas, cada linha 4 bytes (disco vai percorrendo para aproveitar)
+		2^21 * 2^2 = 2^23 bytes (23 é estranho)
+		
+		Então escrevendo de outra forma
+		
+		2^20 é mais próximo, 2^3 * 2^20 -> 8 Mb (MegaByte)
+		
+2) Arquivo FIAP.txt com o tamanho exato de 4 kB (mesmo que o de um bloco de alocação)
+	Foram usados 23 bits para a FAT
+	a) Qual o tamanho do disco?
+	
+	tamBloco = 4 kB
+	FAT = 23
+	
+	2^23 = disco / 4 kB
+	disco = 2^23 * 4 kB = 2^23 * 2^2 * 2^10 byte = 2^35 bytes
+	2^30 -> Gb
+	Então temos 2^5 Mb = 32 Gb
+	
+	b) Considerando FAT32, qual o tamanho máximo de disco que pode ser instalado no sistema?
+	
+	
+		
+	

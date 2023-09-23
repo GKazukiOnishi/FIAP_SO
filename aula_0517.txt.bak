@@ -76,7 +76,7 @@ Exercícios
 		S = 0,05 * (Q + S)
 		S = 0,05Q + 0,05S
 		0,95S = 0,05Q
-		Q = 0,95 * S / 0,05 = 19 * 7 ms = 133 ms
+		Q = 0,95 / 0,05 = 19 * 7 ms = 133 ms
 		
 	3.
 		Sistema de tempo real

@@ -1,0 +1,184 @@
+Depois do processador a memória RAM é o segundo recurso mais importante
+
+Gerência de Memória
+	Classificações dos dispositivos por:
+		* Tempo de acesso
+		* Velocidade de acesso
+		* Custo por unidade de armazenamento (quanto maior menos armazenamento vai ter, cache, RAM e disco)
+		* Capacidade de armazenamento (esse e a velocidade/tempo são inversamente proporcionais)
+	
+	Quanto maior a velocidade maior o custo/byte, porém pior será a capacidade e tempo de acesso
+	
+	Dados acessados diretamente pelo processador
+		Armazenamento Interno (cache, registradores, posições de memória internas ao processador)
+		Armazenamento Primário (RAM, ROM -> onde tem o firmware, BIOS do pc)
+	
+	Dados que devem ser movidos para o primário para o processador enxergar
+		Armazenamento Secundário (disco magnético, disco óptico, fita magnética, memória flash (pen drive), SSD)
+	
+	Quando lemos um arquivo estamos carregando ele em memória RAM
+	
+	Em ordem:
+		Registradores
+		Cache interna (80 Mb)
+		Cache externa
+		Memória principal (alguns Gb)
+		Disco magnético (chega em Tb)
+		Unidade de fita e disco óptico
+	
+	Armazenamento Primário
+		RAM (Random Access Memory): se desligar a energia ela perde a memória, é volátil, leitura e escrita temporária
+		ROM (Read Only Memory): armazenar dados e instruções permanentes que são executadas após ligar ou reiniciar o pc
+			PROM (Programmable ROM) -> dava para atualizar BIOS
+			EPROM (Erasable PROM) -> através de luz ultravioleta tinha como apagar a memória, na foto do slide tem uma janelinha
+				se jogar luz nela apaga, era trabalhoso de fazer
+			EEPROM (Electrically EPROM) -> programável e apagável eletricamente
+			Flash EPROM -> memória flash trabalha com ciclo maior de escrita e leitura, pode ser reescrita bilhões de vezes, a elétrica eram milhões
+			
+			hoje em dia é "read only" mas se atualizar a BIOS ela tem dados alterados
+				(antigamente não era alterável, tinha que trocar o chip e podia dar problemas, era ruim assim)
+	
+		RAM (onde carregamos os programas para executar eles)
+			hoje em dia não está mais crescendo muito a velocidade da RAM
+			estão investindo mais em DDR4 etc. para ler e escrever mais rápido
+			
+	Gerência de memória
+		
+		No começo das eras, coisas monoprogramáveis, funciona assim:
+			Tinha uma parte da memória com o SO e o restante eram programas do usuário
+			Tendência do tamanho dos programas em aumentar, e aí era necessário aumentar a memória do hardware
+		Com o surgimento do multitarefa, multiprogramado:
+			SO tinha que ficar "chaveando" os programas carregados em memória
+			Tiveram a ideia de dividir a memória em várias partes
+			
+			Técnica da Sobreposição (Overlay)
+				40 kB Área de Sobreposição (toda hora que precisava de um novo módulo ele ia buscando e jogando aqui, tamanho menor ou igual ao maior módulo do programa)
+					Módulo de Cadastro 40 kB
+					Módulo de Impressão 20 kB + Área não Utilizada 20 kB
+				30 kB Módulo Principal (código principal)
+				20 kB Sistema Operacional
+				20 kB Área não utilizada
+				
+				Com isso era possível trocar coisas do disco rígido com a memória, SWAP files
+			
+			Alocação Particionada Estática
+				Informava as configurações de partição em uma configuração antes de ligar
+				Quando ligava valia a configuração veita
+				
+				Partição 3, 2, 1 e SO
+			
+				Alocação Particionada Estática Absoluta
+					Era informada onde cada parte do programa seria carregado (em qual partição, região)
+					E nisso era muito comum sobrar memória em alguma parte
+				
+					Isso era comum porque os compiladores da época geravam códigos absolutos
+					Os deslocamentos de memória do programa eram absolutos
+					
+					Se tinha algum loop ele deixava fixo a região da memória em que ele voltaria
+					Portanto se carregar a memória a partir da posição 200 da memória tava ok
+					Se começasse na 600, caso haja algum desvio ele iria para a posição 200 (nada a ver com onde ele foi carregado)
+				
+					À medida que os compiladores foram evoluídos e aprenderam a realocar o código em outros lugares
+					Registradores também foram ajustados para saberem informar a partir de onde ele foi carregado
+					
+					E nisso não faz mais sentido as partições
+				
+			Alocação Particionada Estática com Realocação
+				Estática mas deixa alocar em qualquer lugar
+				ou seja, é dinâmica
+			
+			Alocação Particionada Dinâmica
+				Você pode carregar os programas em qualquer lugar
+			
+				Fragmentação
+					Conforme eram carregados programas na memória
+					Ela ia ficando fragmentada
+					Ex, podia acontecer de ter fragmentos de memórias livres que não sejam suficientes para um outro programa inteiro
+					
+					Soluções:
+					1. Aí era necessário esperar um programa terminar para ter mais memória livre
+						Mas isso é ruim porque nunca se sabe quando isso vai acontecer, pode ser muito tempo até isso
+					2. Realocação de programas
+						Tiramos um programa da memória, salvamos no disco, depois carregamos novamente mas em outra região de memória
+						Isso funciona, mas torna lento, porque passa por uma memória secundária
+					3. Estratégias para Alocação de memória
+						Considerando uma situação fragmentada, temos vários lugares em que podemos encaixar um outro programa
+					
+						Será que existe um jeito melhor que reduz a fragmentação?
+						
+						First-fit -> primeira memória livre que permita carregar o programa
+							Extremamente rápido
+							só varre o vetor procurando uma região livre que suporte o programa
+						Best-fit -> melhor se encaixar
+							Colocar onde o programa melhor se encaixar
+							Tentar ocupar a região toda
+							Tenta se encaixar perfeitamente para ter menos sobrando
+							
+							SO sai varregando os blocos de memória livre e vai procurando a menor diferença de espaço livre e tamanho de programa
+						Worst-fit -> encaixa onde pior se encaixar
+							SO analisa os blocos livres e coloca onde der maior diferença entre memória livre e tamanho
+							
+							Worst porque de certa forma vai deixando mais fragmentado
+						
+						* Fizeram testes e perceberam que a melhor estratégia na verdade é a Worst-fit (apesar do nome)
+						
+						Situação do Best-fit dificilmente acontecia, e nisso ficava sobranco umas partezinhas, por conta disso ia deixando
+							mais fragmentado
+						Na Worst-fit, como deixa um espaço maior, a chance de outro bloco se encaixar no restante era maior
+						
+						Mas mesmo com a melhor estratégia, tinha sempre o problema de em algum momento não ter memória disponível
+						Se a premissa era dividir o tempo da CPU entre vários processos, não fazia sentido faltar memória
+						
+						Por conta disso tem o algoritmo
+						* Swapping
+							Tirar de execução um programa e colocando outro no lugar
+							O tempo todo ele fica descarregando programas para colocar outros
+							Swapp out e Swapp in
+							Porém para isso ele depende de buscar do disco, o que torna isso muito lento comparada com a velocidade do processador
+							
+							Esse problema existe até hoje
+							
+							Mas o principal deles era que quando tirávamos um da memória, tirava ele INTEIRO para depois carregar outro INTEIRO
+							
+							20ms até 150ms -> fatia de tempo hoje em dia
+							Nesse meio tempo não dá para executar o programa inteiro
+							
+				Daí surge
+				
+				* Memória Virtual (Paginação)
+				
+					Imaginando o disco rígito e Memória RAM
+					
+					No disco rígido temos os códigos todos
+					Quando executamos algo, aí ele precisa começar a carregar
+					
+					E se a gente pegasse os códigos e separasse em partes?
+					Aí na RAM a gente também divide em partes de mesmo tamanho
+						(se estiver em porções de N kB, na RAM também serão N kB)
+					Por isso chamamos isso de página (N kB) no Disco Rígido
+					E de moldura de página na Memória RAM
+					
+					Única restrição é que precisam ser do mesmo tamanho
+					
+					Nisso não precisamos ficar carregando TODO o código, só pegamos uma das páginas
+					
+					Se rodar um programa, ele pode só buscar a página da main()
+					Quando acabar a fatia de tempo, ele vai e carrega a primeira página do outro também
+					Nisso ele vai executando
+					Em que eventualmente pode ter páginas que não são executadas totalmente
+					Pode acontecer de precisar de uma outra página específica, aí ele vai lá e carrega essa página
+					E vai indo
+					
+					Com isso usamos a memória em pequenas quantidades e usamos à medida em que precisamos
+					Se não precisar nem carrega
+					
+					Com isso o uso da memória fica muito mais inteligente e racional
+					
+					Usamos em pequenas quantidades, quando precisamos e se precisar
+					
+					Mas ignorando que isso exista, a impressão que alguém teria é que há muito mais memória do que ela tem na realidade
+					Dá a impressão de que temos a memória RAM + uma parte do disco rígido
+					Quando na verdade tem partes na RAM e outras no disco
+					
+					Daí o nome Memória Virtual
+				
