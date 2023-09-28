@@ -1,0 +1,108 @@
+Windows - Sistema de Arquivos NTFS
+	NT -> Versão do Windows
+	FS -> File System
+	
+	NT, XP, 2000
+	
+	Windows 8, 10 e 11 usa outro, chamado de ReFS (Resilient File System)
+		Mas a lógica é basicamente a do NTFS
+		
+	No FAT
+		Podíamos ter 2^64 linhas, cada uma com 4 bytes (32 bits)
+		Ou seja, 2^32 * 64 kB
+		2^32 * 2^6 * 2^10 = 2^48 -> total de informação que consegue armazenar
+
+	Conjunto de Volumes sobre dois Drives
+	
+		LCN -> Logical Cluster Nom
+		Mesma ideia de cluster
+		
+		logical drive C: (FAT) 4 GB
+		logical drive D: (NTFS) 1 GB
+		
+		C -> Porque o A era de disquete, B para transferência
+		
+	Logical CLuser Number (LCN)
+		Estrutura lógica do disco
+			Cada LCN com 4 setores
+			Hoje em dia tem 4kB em cada cluster
+	
+	Para representar esses LCNs, temos uma tabela também, tipo a FAT
+		Master File Table (MFT)
+			Cada linha representa um registro de 1 kB, tamanho de 1 kB por linha
+			Dessa forma, arquivos pequenos podiam ficar lá mesmo, de até 1 kB
+			Uma forma de evitar fragmentação
+			
+			Cada linha pode indicar onde está o arquivo
+			
+		Os primeiros 16 registros são do SO, são arquivos de metadados
+		0 -> aponta onde tem a tabela mestra de arquivos (MFT), diz que ali começa
+		
+		O Master Boot Record (MBR) que contém setores dizendo onde está o 0 da MFT, permitindo localizar a tabela
+		
+		1 -> aponta para uma cópia espelho da MFT
+		2 -> alterações em arquivos, pastas, estruturas etc., ficam no arquivo de log apontado por essa linha, permitindo ter uma forma de recuperar
+		3 -> informações do disco lógico
+				Um arquivo físico pode ter vários discos lógicos
+				Mas até onde vai o C? D? etc.
+				Qual o tamanho de cada
+		4 -> definições de atributos dos arquivos
+		5 -> diretório raiz, é a partir dele que começa tudo, a árvore binária
+		6 -> Mapa de bits dos blocos utilizados, indica se o bloco está ou não em uso, utilizando bits para isso
+		7 -> Aponta para onde está o MBR
+				Permite o dual-boot, possibilita indicar onde está o MBR de outro sistema, por exemplo
+				Pensando também que o MBR poderia se corromper, permitindo indicar uma versão não corrompida
+		8 -> lista de blocos defeituosos, para o SO saber que não deve usar novamente
+				verifica se o setor está com defeito ou não, armazenando uma informação e testando dps
+		9 -> aponta para uma tabela com informações indicando quais direitos um usuário pode executar no arquivo
+		10 -> apona para uma tabela de conversão de letras maiúsculas e minúsculas
+				a ASCII é consideravelmente fácil, porque A está em 41, a está em 61, ou seja, para converter pode-se só somar 20.
+				O computador faz um OR e AND com os bits
+		11 -> Extensão, dá a entender que tudo que não for possível representar anteriormente, fica nele
+		
+		12, 13, 14, 15 e 16 -> reservados para uso futuro, para caso precisassem mais para frente
+		
+	Atributos
+		Informação-padrao: Timestamp, flags
+		Nome do arquivo - Nome em Unicode para evitar problemas
+			Até o surgimento do UniCode
+		...
+		Dados
+	
+	Ou seja, não é só dado
+		Então cada registro tem um formato padrão de um cabeçalho, nome do arquivo, descritor de segurança e finalizamente o Dado
+		Para garantir que ele está íntegro, geramos um código hash para verificar  se está válido.
+		Armazena quem está usando o arquivo, quem está trabalhando etc.
+		
+		O endereçamento de informação é meio que pensada em alocação contínua
+		Indica onde começa, quantos clusters vai avançar
+		
+		Portanto, 20, 4 -> indica que começa em 20 e vai até 23
+		
+		Mas como representar quando ele é muito grande
+			O registro do arquivo armazena onde o registro base vai continuar
+			Aí ele consegue continuar as séries de blocos até chegar no final
+		
+	Para abrir um arquivo, intermanete o SO passa
+		\??
+		-> aí ele sabe que está procurando um arquivo
+		E então a partir de um drive lógico, ele vai acessando
+		
+		Entra na raiz do drive, encontra o arquivo de controle do diretório-raiz
+		Com o diretório raiz consegue localizar onde está o arquivo na próxima pasta, e vai indo
+		Até encontrar, aí ele cria um novo objeto-arquivo para manipular
+		
+	
+
+		
+		
+		
+			
+	
+		
+		
+		
+		
+		
+			
+		
