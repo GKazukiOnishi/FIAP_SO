@@ -94,6 +94,114 @@ Windows - Sistema de Arquivos NTFS
 		
 	
 
+
+Entrada e Saída
+	Gerenciamento de entrada e saída
+	
+	Tanto discos, quanto pendrives etc.
+	Discos -> armazenamento secundário, mas também de entrada e saída
+	
+	Tem um módulo do SO para esse controle
+	
+	Tempo de leitura/escrita -> depende do mecanismos do dispositivo
+		Existem técnicas para tentar ganhar o máximo de dispositivo no seu uso
+	
+	Nisso temos Algorimos de escalonamento
+	
+		Se usarmos o disco, ele começa a girar e tem o tempo de sua latência rotacional
+		Se parar, ele para, aí depois precisa girar dnv
+		Se for em sequência, ele continua lá sem parar
+		
+		Já que o Tempo de Seek é o que podemos melhorar usando o software
+		Podemos tentar reduzir ele, talvez melhorando o caminho para percorrer o disco
+		
+		Então surgiram vários algorimos
+		
+		Algoritmo FCFS
+			Tipo FIFO, primeiro a chegar, primeiro a ser atendido
+			
+			Em um cenário, imagine que o disco tenha 100 cilindros
+				Se precisar acessar 33, 72, 47, 08 ...
+				O disco vai acabar indo e voltando
+				Então fica ruim, não tem muita racionalidade para isso
+		
+		Algoritmo SSF (SSTF)
+			Ir por menor deslocamento, tentar visitar o cilindro mais próximo
+			Não precisando ler na ordem necessariamente, porque depois ele poderia organizar
+			
+			Usando o mesmo cenário, seria 33, 47, 72, 08, considerando que comece no 33
+			
+			Nisso, os cilindros mais extremos tem uma tendência de serem visitados por último
+			
+			Braço vai indo do cilindro mais interno ao mais externo e vice-versa
+			ce <> ci
+			
+			Imaginando que na maioria das vezes, o braço fique mais ou menos no meio, e o criterio é ir para o mais próximo
+			Isso vai fazer com que o braço fique preso na região central
+			Já que só vai nos próximos de onde está
+			
+			Então pode ser que tenha um tempo bom, ou um tempo maior
+			E isso é ruim, porque vai gerar uma variância
+			
+			Nisso, você até pode ser o primeiro a "chegar", mas isso não significa que vai ter o retorno primeiro
+			
+			Imagine agora que algum arquivo cresça, e a posição livre está lá longe
+			Para ler, vai demorar muito, porque vai estar lá longe do meio
+			
+		Algoritmo SCAN (usado até hj)
+			Algoritmo do elevador
+			
+			Ele vai até o último andar, depois desce até o final
+			Ele faz uma varredura ao longo da superfície do disco
+			
+			Ele até procura o mais próximo, mas respeita um sentido preferencial
+			E vai depois até o último que precisar naquele lado, depois volta
+			
+			Nisso o tempo de resposta fica mais uniforme
+			Não vai demorar tanto assim
+			
+			Teste de Scanner é movimentar o braço para passar por todos os cilindros
+			
+		Algoritmo C-SCAN
+			Complete SCAN
+			
+			Ideia de que, mesmo não precisando ir até o cilindro 0, sempre faço o caminho todo
+			Vou até o 0, depois vou até o último
+			Isso tudo mesmo sem precisar
+			
+			Então ele não foi implementado
+			
+		Algoritmo LOOK
+			A partir da ideia anterior
+			
+			Vai lá e sabe que vai ler um arquivo
+			Pega da tabela e sabe onde visitar
+			
+			Então vou traçar o caminho que nem o SCAN
+			E vou me movimentando
+			Mas e SE alguma solicitação nova quiser visitar um cilindro no trajeto, porque não aproveitar?
+			
+			Nisso, ele faz o caminho do SCAN, mas se algo no caminho estiver próximo, eu atendo também
+			
+	Com o surgimento de discos de alto desempenho
+		Para eles, o tempo de seek pode ser menor que o tempo para completar uma volta inteira
+		
+		Tseek menor que o Tlr
+		
+		Usando o algoritmo, as vezes precisamos ir percorrendo e dando várias voltas
+		Mas se o tempo de uma volta completa for menor, porque não usar o braço para movimentar um pouco e evitar voltas desnecessárias?
+		
+		Native Command Queuing (NCQ)
+			Isso é a ideia do NCQ
+			
+			Ele movimenta o braço se for valer a pena, se for reduzir a quantia de voltas que daria no disc
+			
+			Ao invés de ir girando o disco todo
+			Pode traçar um caminho melhor com menos voltas
+			
+		
+			
+			
 		
 		
 		
