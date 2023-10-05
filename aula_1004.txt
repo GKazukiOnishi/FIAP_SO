@@ -48,3 +48,73 @@ Exercícios
 	Total de 59 operações
 	
 	Tseek = 59 * 6 ms = 354 ms
+
+
+Como saber se uma informação armazenada não se corrompeu?
+	Se o valor não foi alterado
+	
+	Dada um dado de 512B de dados
+	
+	operação de escrita (W): (512Bdata)
+	
+	roda uma função Fecc(512Bdata) -> (4 B ECC)w
+	
+	operação de leitura (R): (512Bdata)
+	
+	roda uma função Fecc(512Bdata) -> (4 B ECC)r
+	
+	ECC: Error Correction Code
+	
+	SE (4 B ECC)r = (4 B ECC)w -> 512 B data OK
+	Caso contrário tem algo corrompido
+	
+	Para recuperar, podemos rodar uma função força bruta
+	tentando localizar o bit corrompido
+	
+	Para localizar ele vai "chutando"
+	Assintoticamente é polinomial
+	
+	Ele basicamente vai pegando os bits e verificando se ao mudar o valor de um bit, o valor se aproxima do esperado ou se distancia
+	Basicamente tenta localizar os bits perfeitos que resultam no valor esperado
+	
+	Essa recuperação de bits é de forma serial
+	o disco vai girando e vai pegando informações
+	Assim que termina de coletar no setor 0, ele aplica essa lógica toda para verificar se o disco não se corrompeu
+	Dependendo do grau do polinomio, até 17 bits assim por aí ele consegue
+	Mas demora um tempo para isso
+	
+	Então quando termina o último bit do setor 0, ele precisa de um tempo para pensar, nisso ele não consegue fazer o mesmo para o próximo setor
+	Teria que dar uma volta inteira
+	Aí surgiu uma ideia
+	
+		Deslocar os setores um certo espaço, para ganhar tempo
+		Já que esses locais dariam problema porque teria que dar outra volta para verificar
+		Onde podemos colocar para dar tempo da controladora conseguir processar
+		
+		Basicamente vai deslocar uma quantia suficiente para o tempo necessário
+		Então ele vai deslocando e testando para ver se dá tempo, caso contrário avança setores
+		
+		Isso é chamado de FATOR DE ENTRELAÇAMENTO
+		
+Fator de entrelaçamento
+	Por conta da ideia acima
+	Não temos setores seguidos tipo, 0, 1, 2, 3, 4, 5, 6 e 7 -> seria um fator 0
+	
+	Para um fator de entrelaçamento 1: 0, 4, 1, 5, 2, 6, 3, 7
+	Para um fator de entrelaçamento 2: 0, 3, 6, 1, 4, 7, 2, 5
+	
+	Se pular 3, acaba dando em cima de outro, aí só colocar no próximo
+	Porque o fator de entrelaçamento é o mínimo deslocamento necessário
+	
+	O SO hoje em dia sabe quanto tempo é necessário, então calcula isso sozinho
+	Ele sabe a velocidade do disco, tempo necessário, etc.
+	
+	Errar esse fator causa perda de desempenho, já que nisso vai forçar o disco a dar uma volta inteira para testar o algoritmo de dados corrompidos
+	Então tende a colocar um valor superior
+	Por isso nem sempre trocar de disco para velocidades maiores dá certo, porque pode dar ruim nesse fator
+	
+	Hoje em dia o SO trata
+	
+	
+	
+	
