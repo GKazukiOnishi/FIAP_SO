@@ -22,7 +22,7 @@ Windows - Sistema de Arquivos NTFS
 		
 		C -> Porque o A era de disquete, B para transferência
 		
-	Logical CLuser Number (LCN)
+	Logical Cluser Number (LCN)
 		Estrutura lógica do disco
 			Cada LCN com 4 setores
 			Hoje em dia tem 4kB em cada cluster

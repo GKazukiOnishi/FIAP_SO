@@ -1,0 +1,50 @@
+Exercícios
+
+3) Pedidos de acesso ao disco para os cilindros 6, 15, 23, 1, 40, 7 e 36, nesta ordem
+	Qual o tempo dado um algoritmo?
+	Braço começa no cilindro 20
+	Tseek para movimentar 1 cilindro = 6ms
+	
+	a) FCFS
+	
+	20 -> 6: 14
+	6  ->15: 9
+	15 ->23: 8
+	23 -> 1: 22
+	1  ->40: 39
+	40 -> 7: 33
+	7  ->36: 29
+	
+	Total de 154 operações de seek
+	
+	Tseek = 154 * 6ms = 924 ms
+	
+	b) SSF
+	
+	20 ->23: 3
+	23 ->15: 8
+	15 -> 7: 8
+	7  -> 6: 1
+	6  -> 1: 5
+	1  ->36: 35
+	36 ->40: 4
+	
+	Total de 64 operações (quase 1/3 do anterior)
+	
+	Tseek = 64 * 6 = 384 ms
+	
+	c) SCAN
+	
+	Considerando que ele vá para a posição maior primeiro
+	
+	20 ->23: 3
+	23 ->36: 13
+	36 ->40: 4
+	40 ->15: 25
+	15 -> 7: 8
+	7  -> 6: 1
+	6  -> 1: 5
+	
+	Total de 59 operações
+	
+	Tseek = 59 * 6 ms = 354 ms
