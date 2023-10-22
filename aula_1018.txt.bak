@@ -1,0 +1,163 @@
+Exercícios sobre fator de entrelaçamento
+
+4) Disco entrelaçado com fator 2. 8 setores de 512 bytes em cada trilha. Velocidade de rotação 6.000 rpm (rotações por minuto)
+	Meia rotação para ter o setor 0 embaixo da cabeça
+
+	Fator 2 de entrelaçamento.
+	8 Setores de 512 bytes.
+	Vr = 6.000 rpm
+
+Qual o tempo para ler todos os setores de uma trilha em ordem, supondo-se que o braço já esteja corretamente posicionado?
+
+	Tl = Tlr + Tseek + Ttf
+	Tlr = 0,5 rotação * Vr
+	Tseek = 0 (já está no lugar que deseja após a rotação inicial, setor 0)
+	Ttf = (22 setores caminhados / 8 setores no total) * Vr = 2,75 rotações * Vr
+	
+	Tl = 0,5Vr + 0 + 2,75Vr = 3,25Vr
+	
+	Vr = 6.000 rotações por minuto
+	60s -- 6.000 rotações
+	1s   -- x
+	60x = 6000
+	x = 100 rotações
+	
+	Portanto Vr = 100 rotações por segundo
+	
+	1s -- 100 rotações
+	x  -- 3,25 rotações
+	100x = 3,25
+	x = 3,25/100 = 0,0325 segundos
+	
+	Portanto Tl = 32,5 ms
+
+Qual a velocidade de leitura?
+
+	V = quantidade de bytes lidos / tempo gasto
+	V = (8 * 512 bytes) / 0,0325 s =aproximadamente 126.031 B/s ou 126 kB/s
+	
+E para um disco sem fator de entrelaçamento?
+	
+	Considerando que o hardware seja capaz de ler todos os setores no tempo disponível
+	
+	Tl = 0,5Vr + 0 + 1Vr (só uma volta passa por todos os setores)
+	Tl = 1,5Vr
+	
+	1s -- 100 rotações
+	x -- 1,5 rotações
+	x = 1,5 / 100 = 0,015 s = 15 ms
+	
+	Tl = 15 ms
+	
+	V = 8 * 512 / 0,015 = 273.067 B/s ou 273 kB/s
+
+9) Disco com 8 setores de 512 bytes, velocidade de rotação de 5.000 rpm, braço posicionado no setor 0
+
+	a) Controladora de disco usa 2 ms para ler um setor após passar na cabeça de leitura. Qual o fator de entrelaçamento aconselhável para o disco?
+
+		Vr = 5.000 rpm
+		
+		60.000 ms -- 5.000 rotações
+		1 ms      -- x rotações
+		60000 x = 5000
+		x = 5 / 60 = 1 / 12 rotações
+		
+		Vr = 1/12 rotações por ms
+		
+		Para percorrer um setor (1/8 do tempo de uma volta), são necessários:
+		12 ms por volta
+		12 / 8 = 3/2 = 1,5 ms por setor
+		
+		Como 1,5 ms < 2 ms necessários após uma leitura, fator 1 não será suficiente, porque após a leitura do setor 0, serão necessários 2 ms
+			Porém nesses 2 ms, já terá passado 1,5 ms, o que significa que 1 setor já terá sido percorrido
+			
+		2 ms < 2 * 1,5 ms -> Portanto com fator de entrelaçamento 2, o disco não dará voltas à mais para ler o próximo setor lógico
+		
+	b) Quanto tempo será necessário para ler todos os setores na ordem?
+	
+		Dado o fator de entrelaçamento 2, temos que para ler todos os setores será necessário percorrrer 22 setores, como são 8 no total
+			temos que serão necessárias 22 / 8 = 2,75 voltas
+			
+		Dada a velocidade de rotação, temos:
+			12 ms -- 1 volta
+			x     -- 2,75 voltas
+			x = 12 * 2,75 = 33 ms
+			
+			33ms + 2ms (tempo após ler o último setor) = 35 ms no total
+		
+
+TORÇÃO CILÍNDRICA
+	Deslocamento que é aplicado em cada setor 0, em relação à trilha anterior, para que após completar uma operação, o setor 0 da próxima trilha
+		esteja na iminência de passar pela cabeça de leitura, aumentando o desempenho do sistema de arquivos
+	
+	Um disco de 10 mil rpm, com 300 setores por trilha, considerando um tempo de 800 micro segundos para mover para outra trilha
+	Qual a intensidade da torção cilíndrica do disco?
+	
+		60 s -- 10.000 rot
+		t    -- 1 rot
+		t = 6.000 microssegundo
+		
+		tempo para ler 1 setor = 6.000 us / 300 = 20 us
+		
+		Portanto, a cada 20 us, um novo setor passa sob a cabeça de leitura.
+		Como o tempo de posicionamento de uma trilha para outra é de 700 us:
+		
+		torção cilíndrica = 800 us / 20 us = 40 (40 setores deslocados)
+	
+RAID
+	Arranjo redundante de discos independentes (RAID - Redundant Array of Independent Disks)
+	
+	Forma de aprimorar desempenho e confiabilidade nos discos rígidos
+	
+	Ideia:
+		Substituir o disco por um conjunto de discos, e usar uma placa controladora RAID no lugar da controladora do disco.
+		Assim o dispositivos vai se comportar como um único disco para o SO, mas vai suportar operações em paralelo
+	
+	SCSI RAID (Small Computer System Interface) eram as controladoras usadas, hoje em dia a SATA RAID (Serial Advanced Technology Attachment) também permite
+	
+	Existem várias organizações e configurações de RAID, fabricantes costumam ter 7 níveis
+	
+	Nível 0:
+		Temos diversas faixas de k setores cada
+		Permite usar striping para obter alto desempenho na transferência de dados
+		
+		Por exemplo, um comando para ler 4 faixas consecutivas pode ser quebrado em quatro comandos, um para cada disco envolvido
+			de forma que eles podem operar em paralelo
+		O problema é que falhas levam à perda de conteúdo gravado no disco
+		
+		Esse nível funciona bem para grander solicitações, envolvendo mais discos, para trazer mais paralelismo
+	Nível 1:
+		Duplica todos os discos, sendo essas réplicas para backup
+		Conhecido como mirroring ou espelhamento por isso
+		Cada faixa é escrita duas vezes
+			Nisso a escrita pode não ser melhor do que para um disco único
+			Mas a leitura pode ser duas vezes melhor, porque cada cópia pode ser usada paralelamente, distribuindo a carga para
+			mais discos.
+		Nisso ele apresenta tolerância a falhas, já que tem o backup, se precisar troca o disco e usa o backup só.
+	Nível 2:
+		Aqui ele vai parar de trabalhar com faixas e vai usar bytes
+		Cada byte é dividido em um par de pedaços de 4 bits cada (nibble) acrescentados de um código Hamming, para cada um formar uma palavra
+			de 7 bits, das quais os bits 1, 2 e 4 são de paridade.
+		Nisso usando um código Hamming é possível ler esses bits espalhados em discos distintos
+		Desvantagem de que vai exigir uma rotação sincronizada entre todos os discos, exigindo muito da controladora RAID, já que a todo momento
+			vai precisar verificar erros do código Hamming para cada bit
+	Nível 3:
+		Versão simplificado do 2
+		Aqui temos um único bit de paridade para cada palavra de dados, que é escrito no disco de paridade
+		Com esse 1 bit ele ainda consegue detectar e corrigir erros, porque ao localizar um bit defeituoso, assumindo que tudo seja 0, ao não bater
+			a paridade, ele já sabe que é no disco quebrado que tinha o valor 1
+		Mas comparando desempenho com o nível 2, não há muita difereneça
+	Nível 4
+		Voltam a usar faixas, mas sem paridade ou discos sincronizados.
+		Ele faz a paridade faixa-por-faixa em um disco extra
+		Se der falha em algum, consegue recuperar fazendo a leitura do conjunto inteiro de discos
+		O que protege de falhas, mas trás um ruim desempenho.
+		Como é por faixa a paridade, caso um setor seja modificado, será necessário ler todos os arquivos para recalcular a paridade
+		E como ele vai ter uma carga pesada de uso, acaba podendo ter gargalos
+	Nível 5
+		Tira o gargalo ao distribuir os bits de paridade uniformemente por todos os discos, de modo circular
+		Mas caso algum disco quebre, a reconstrução é complexa
+	Nível 6
+		Parecido com o 5 mas tem um nível adicional de paridade
+		
+		
