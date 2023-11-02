@@ -1,0 +1,12 @@
+Operação com Módulos E/S
+	Podem operar das seguintes maneiras:
+	•	E/S programada (inquirição (polling)).
+	•	E/S via interrupções.
+	•	E/S com acesso direto à memória (DMA – Direct Memory Access).
+	
+	Elas são diferentes no uso da CPU e das interrupções
+	
+	E/S programada
+		O processador executa programas para interagir com a E/S
+		
+		

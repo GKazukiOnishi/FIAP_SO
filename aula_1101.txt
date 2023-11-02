@@ -1,0 +1,102 @@
+Exercícios
+6) Fast wide SCSI-II -> bus SCSI que opera em uma ordem de transferência de MB por segunda. Supondo uma rotação de 9000 rpm
+	tenha setores de 512 bytes, 240 setores por trilha
+	a) Qual a taxa de transferência sustentada pelo drive em megabytes por segundo
+	b) Controlador DMA com 4 canais. Ele consegue requisitar uma palavra de 32 bits a cada 250 ns.
+		Ele é rápido o suficiente para trabalhar com o bus SCSI ou vai ter gargalo?
+		
+	a) Em 1 rotação tem-se:
+		240 setores/rot x 512 B/setor
+		240 x 0,5 kB
+		120 kB movimentados em uma rotação kB/rot
+		
+	   Em 1s:
+		9000 rot -- 60 s
+		r    rot -- 1 s
+		60r = 9000
+		r = 9000 rot x 1 s / 60 s = 150 rotações em 1 segundo rot/s
+	   
+	   Portanto:
+	    Vscsi = 150 rot/s x 120 kB/rot = 18000 kB/s = 18 MB/s
+	b) DMA pode ter N canais, mas 1 só vai trabalhar com E/S, os outros vão fazer outras coisas
+		O que importa é a velocidade de 1 canal
+		32 bits = 4 bytes
+		Vdma = Movimenta 4 bytes em 250 ns = 4/250*10^-9 = 4*10^9 / 250 = 4 * 10^3 * 10^6 B / 250 s = 4000 MB / 250s = 400/25 = 16 MB/s
+		
+		Vdma = 16 MB/s < 18 MB/s = Vscsi
+		
+		Portanto, a controladora DMA vai ser um gargalo para o bus SCSI
+		
+7) Rede local. É feito uma chamada para escrever na rede(tipo email) -> SO copia dados do espaço do usuário para um buffer do kernel, que envia
+	para a controladora de rede. QUando todos estão na contorladora, enviam eles para a rede em 10 MB/s. Na recepção, quando o último bit chega,
+	o processador da estação destino é interrompido e o kernel copia os dados do seu buffer para inspecioná-los. Depois manda para o espaço de
+	usuário do destinatário. Cada interrupção e seu processamento levam 2ms, pacotes de 2.048 bytes, para transferir um byte do espaço de usuário
+	para o kernel leva 1 us. Qual a maior velocidade de transferência de um processo para outro?
+		Considere 1.024 bytes como sendo 1000 bytes
+	
+	Tempos envolvidos:
+		Tempo de cópia do user para kernel na origem
+		Tempo de cópia do kernel para user no destino
+		Tempo da interrupção após acabar pacotes
+		Tempo de tráfego do pacote na internet
+		
+		Pacote = 2 kB = 2 * 10^3 bytes
+		
+		Vrede = dados em bytes / tempo de tráfego
+		
+		Vrede = 2*10^3 B / Ttx
+		
+		Ttx = Tco + Ttf + Trti + Tcd
+		Trti = 2ms
+		Tco = Tcd = 2*10^3 B * 1x10^-6 s/B = 2*10^-3 s = 2ms
+		
+		1s -- 10 MB
+		Ttf -- 2*10^3 B
+		
+		1s -- 10*10^6 B
+		Ttf -- 2*10^3 B
+		Ttf s * 10*10^6 B = 2 s * 10^3 B 
+		Ttf = 0,2 * 10^-3 = 0,2ms
+		
+		Ttx = 2ms + 0,2ms + 2ms + 2ms = 6,2 ms
+		
+		Vrede = 2*10^3 B / 6,2*10^-3 s = 2/6,2 * 10^3*10^3 B/s = 0,3225 * 10^6 B/s
+		Isso mostra como o tempo de tráfego na rede interfere até que pouco no tempo total
+
+Deadlock - Bloqueio ou trabamento perpétuo / Impasse
+	Quando não é possível prosseguir por estar sendo impedido por outro
+	
+	Exemplo:
+		Considerando códigos que alocam disco e impressora
+		
+		1. Ler o dado do arquivo, para depois mandar pra impressora
+		2. Aloca a impressora, para depois buscar o arquivo
+		A primeira operação roda, mas na próxima, como o outro está esperando o outro recurso, e ele por sua vez está sendo usado no outro código
+		Temos um deadlock
+	
+	Condições para Deadlocks
+		Condição de exclusão mútua: Não podemos compartilhar recursos entre os processos
+			Por isso trabalhamos com pool de conexões de banco de dados
+			Disco não tem como ler duas coisas ao mesmo tempo
+		Condição de espera por recurso: Quando não consegue alocar recurso, espera
+		Condição de ausência de preemptividade: Preempção: Capacidade do programa do SO causar uma preempção, tomar o recurso para outro usar.
+			Mas a maioria dos recursos não funcionam dessa forma, porque por exemplo, vc tá usando uma impressora, do nada alguém toma e usa
+		Condição de espera circular: Dadas as três condições anteriores, temos um ciclo, o deadlock se forma
+	
+		Recursos não preemptíveis: Núcleo de processamento, Arquivo temporário, Placa de rede, Porta USB
+	
+	Tratamento de Deadlocks
+		Única forma é alocando cuidadosamente os recursos
+		
+		Portanto, para evitar seria necessário fazer uma sequência de análisas para saber se ocorreria
+		
+		Número de análises = Número de processos x Número de recursos não preemptíveis
+		
+		Ordem de grandeza = Dezenas x Centenas = Milhares de análises
+		
+		Por isso a grande maioria dos SOs ignora essa situação
+			Algoritmo da Avestruz -> SO só espera o problema passar
+		
+		Cada vez mais temos mais threads e recursos
+		Só que como a probabilidade não é muito grande, a maioria ignora
+		
