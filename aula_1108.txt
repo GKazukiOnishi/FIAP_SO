@@ -1,0 +1,164 @@
+Exercícios
+	2) Processadores atuais incluem mecanismos para o tratamento de situações especiais, conhecidas como interrupções. Em uma interrupção, o fluxo normal de instruções é interrompido para que a causa da interrupção seja tratada. Em relação a esse assunto, assinale a opção incorreta:
+
+	(A) O processador pode auto interromper-se para tratar exceções de execução, tais como um erro em uma operação aritmética, uma tentativa de execução de instrução ilegal ou uma falha de página em memória virtual.
+		Sempre que dá alguma falta de página, são justamente as interrupções que tratam isso
+		Quando ocorre algum erro, algum bit está com problema, ele dá a famosa tela azul e exibe o dump da região com problema
+			Nisso o bit de paridade costuma ajudar, se ele indicar que precisa ser número par, vc consegue saber oq falta para ser um ou outro (0)
+		Execução em região incorreta de memória etc.
+	(B) Geralmente, a tabela de vetores de interrupção é armazenada na memória baixa, nas primeiras posições de memória RAM. Estas posições mantêm os endereços das rotinas de tratamento de interrupção para os diversos dispositivos. Este array de endereços, ou vetor de interrupções é então indexado por um único número de dispositivo fornecido com a solicitação de interrupção, de modo a fornecer o endereço da rotina de tratamento de interrupção para o dispositivo que está provocando a interrupção.
+		Primeiros espaços de memória contém o código do SO, até porque lá também ficam as interrupções
+		Quanto menor o número, mais prioritário
+		Esse vetor é indexado pelo número da interrupção, e lá temos o endereço da rotina de tratamento de interrupção
+		
+		Tabela de Vetores de Interrupção:
+			A partir do número, temos uma tabela em que achamos o endereço onde está o programa para tratar a interrupção
+			Cada dispositivo com uma interrupção diferente
+			
+			Registradores CS - Área de código - e IP
+	(C) Quando uma solicitação de interrupção de um dispositivo chega, caso a CPU esteja executando uma instrução, em geral, a interrupção fica pendente até o término da execução da instrução em questão.
+		Quando ocorre uma interrupção, ela sempre vai esperar que a instrução finalize, é atômico
+		Só depois que o ciclo da instrução terminar é que roda
+	(D) Geralmente, são assinalados números para as interrupções, onde as interrupções de menor número têm prioridade sobre as interrupções de maior número. Isto significa que uma interrupção 5 terá prioridade de processamento sobre uma interrupção 7, mas poderá ser interrompida por uma interrupção 3.
+		Timer -> Dita o tempo do sistema está no zero
+		Depois teclado -> porque antes era só teclado
+		Quando menor o número, mais prioritário, podendo interromper outras com menor prioridade
+	(E) Rotinas de tratamento de interrupção devem ser executadas com o mecanismo de interrupção inibido, pois esse tipo de rotina não permite funções aninhadas.
+		Códigos de interrupções tendem a ser menores possíveis, para evitar esse efeito de aninhamento
+		Se já estiver tratando um de um tipo, não vai rodar outra igual
+		Não tem isso de inibido
+		Para evitar ele só deixa os códigos breves (precisa rodar bemm rápido)
+		
+		Na pilha da interrupção, ele salva CS e IP porque sempre vai mudar, vai para outra interrupção em outro lugar da tabela lá
+		Flags porque tende a mudar também
+		Código de ERRO caso tenha exceção
+
+	Responsta: E -> Incorreta
+	
+	
+	Controlador de Interrupção
+		Trata as várias interrupções que os periféricos podem gerar, conversando com o processador, que por outro lado é só 1
+		Temos um relacionamento 1 x N
+		Ele sabe identificar pelos códigos das interrupções de qual dispositivo veio
+		Sabe priorizar as interrupções
+		Sabe guardar as demais que não foram priorizadas, para passar logo em seguida
+	
+	Tipos de interrupção
+		Original, gerada pelos periféricos
+		E outro tipo que não pode desativar, mascarar -> NMI, non mascarable interrupt
+			Usada para eventos catastróficos. Ex: Acabou energia
+				Gera NMI e ele tenta salvar o máximo possível antes de acabar energia
+			Instrução que não existe tenta ser decodificada.
+				Pega as informações dos registradores e tenta salvar
+	
+	3) Os módulos de E/S podem operar de três maneiras básicas: E/S programada (polling ou inquirição), E/S via interrupções e E/S via acesso direto à memória (DMA – Direct Memory Access). Com relação a esse assunto, assinale a opção incorreta:
+
+	(A) A maioria dos controladores de DMA usa endereçamento de memória física para suas transferências. O uso de endereços de memória física requer que o sistema operacional converta o endereço virtual do buffer de memória pretendido em um endereço físico e escreva esse endereço físico no registrador de endereço do controlador de DMA.
+		DMA só sabe o endereço de origem e de destino, não sabe o que é memória virtual
+		Ele basicamente pega os dados dele, sabe a origem e o destino só
+		Geralmente o dispositivo de E/S é a origem
+		
+	(B) Um dos grandes problemas relacionados à utilização de um controlador de DMA advém do fato do controlador de DMA e do processador não conseguirem utilizar os barramentos de dados e endereços simultaneamente. Isto é, durante o tempo em que o controlador de DMA estiver utilizando os barramentos de dados e endereços a operação do processador é completamente interrompida.
+		Só o processador e controlador sabem mexer nesse barramento, alterar os dados
+		Mas a operação do processador não é interrompida, ele continua rodando as coisas na memória cache dele etc.
+		Pode ser que em algum cenário ele fique sem nada, mas é mais raro
+
+	(C) As técnicas de E/S programada e E/S via interrupções limitam a velocidade de transferência dos dados do módulo de E/S para a memória. Além disto, a CPU fica comprometida com a monitoração do módulo de E/S (no caso de E/S programada) ou com a sobrecarga imposta pelo tratamento das interrupções (no caso de E/S via interrupções).
+		Verdadeira, já que o processador precisa ficar verificando estado do E/S ou rodando as interrupções todas
+
+	(D) Na técnica de E/S programada os dados são trocados entre o processador e o módulo de E/S. Ou seja, o processador deve executar um programa que verifique o estado do módulo de E/S, envie o comando que deve ser executado e aguarde o resultado do comando para então efetuar a transferência entre o módulo de E/S e algum registrador do processador.
+		O programa fica verificando estado do módulo E/S, envia comando e aguarda, só depois que faz a transferência e volta a executar
+		Em algum outro dispositivo, que não seja um PC, não é um problema, porque não vai ter N coisas que atrapalhariam tanto assim isso
+		
+	(E) Para superar o problema da espera da CPU por operações nos dispositivos periféricos pode ser utilizado o mecanismo das interrupções, ou seja, E/S via interrupções. Uma interrupção permite que um módulo de E/S ganhe a atenção imediata da CPU para finalizar sua tarefa.
+		Modo de interrupção, em que ele consegue ganhar atenção da CPU para finalizar transferência
+		Usado para tratar teclados, por exemplo, porque não precisa de tudo que o DMA faz para os poucos bytes apertados no teclado
+			Não precisa saber a qtd de bytes, dispositivo origem e destino etc.
+		Mouse também, cada interrupão é coisa de 3 bytes, X, Y e clique do mouse
+		Não sei quando o mouse vai parar, vai ficar lá rodando
+		
+		Grande quantidade de dados vale a pena DMA
+		Quantidade média (placa de rede) - Email por exemplo também DMA
+		Pequena quantidade já não vale a pena - Interrupções
+	
+	Resposta B -> Incorreta
+
+	5) Em relação aos device drivers, assinale a opção incorreta:
+
+	(A) Como os device drivers são códigos reentrantes que executam em modo núcleo (kernel), qualquer erro de programação pode comprometer por completo o funcionamento do sistema computacional. Por isto, um device driver deve ser cuidadosamente desenvolvido e testado.
+		Verdadeira, roda em kernel mesmo
+	(B) Os device drivers fazem parte do núcleo do sistema operacional e, geralmente, são escritos em linguagem assembly ou linguagem C.
+		Verdade
+		Sistemas críticos de segurança tendem a não usar OOP, porque para homologar eles querem que cada trecho esteja associado a um dispositivo
+			Nisso ia ter muitos códigos para cada componente de hardware
+			Códigos sem nenhuma associação direta tendem a não ser homologadas
+	(C) Devido ao alto grau de dependência entre os device drivers e o restante do núcleo do sistema operacional, os fabricantes desenvolvem, para um mesmo dispositivo, diferentes device drivers, um para cada sistema operacional.
+		Verdade
+	(D) Tipicamente, após emitir uma sequência de comandos para um dispositivo, o device driver deste dispositivo espera até que o dispositivo realize a operação solicitada, de modo que o device driver se autobloqueia até que uma interrupção ocorra e o desbloqueie.
+		Verdade
+	(E) Normalmente, os device drivers são aptos a fazer chamadas ao sistema, mas, no entanto, eles podem interagir diretamente com o núcleo do sistema operacional para executar tarefas como: alocar e liberar páginas físicas de memória para serem usadas como buffers, acessar o controlador de DMA (Direct Memory Access), acessar o controlador de interrupção etc.
+		Falsa, porque já rodam no mesmo nível do SO, não precisa fazer as chamadas de sistema para rodar algo do SO
+		Já está no nível do SO mesmo
+		Eles alocam e liberam páginas, acessam controladores de interrupção, DMA, buffers etc.
+	
+	Resposta E -> Incorreta
+
+	3) Fator de entrelaçamento
+		Tem um exemplo de imagem dos setores numerados com esse entrelaçamento
+		
+		Disco de 8 setores de 512 bytes em cada trilha
+		Velocidade d 12.000 rpm
+		Braço já no setor 0, corretamente pocionado para ler
+		
+		a) Controladora gasta 1 ms para ler um setor após passar pela cabeça de leitura. QUal o fator de entrelaçamento aconselhável
+		b) Quanto tempo para ler todos os setores de uma trilha em ordem
+		
+		Obs: Isso tudo porque ele vai rodando códigos para correção e verificação das informações
+			Vai rodando função polinomial para validar as informações lidas e escritas, comparando para ver se bateu
+			Caso contrário está corrompido, aí roda a função e tenta encontrar o bit com erro
+			Vai rodando força-bruta trocando os bits até baterem o valor esperado
+			Ele pega os quadrantes das informações, mexe em um bit e verifica se chegou mais perto, se está longe vai para outro
+			
+			Geralmente o disco pode falhar de 2 formas:
+				Deu uma falha no material em um lugar e grava só o bit 0, ao invés de 1
+				Ou, ocorreu algum interferência eletromagnética que bagunçou os bits todos (hoje em dia é bem blindado)
+			Nisso sempre é preciso de um tempo para ele rodar esse código de ECC, e se ele passar do lugar, precisa dar a volta toda para passar
+				no setor dnv
+		
+		a) 
+			12.000 rotações em 1 min
+			12.000 em 60 * 1000 ms
+			
+			12.000 voltas -- 60.000 ms
+			1 volta       -- x      ms
+			x = 60.000 / 12.000 = 5 ms por volta
+			
+			5 ms em 8 setores:
+				1 setor é quanto tempo?
+				
+			5 ms -- 8 set
+			x ms -- 1 set
+			8x = 5
+			x = 5/8 ms
+			
+			se leva 1 ms para ler um setor:
+				0 > 1 ms -> precisa de um tempo, mais que fator 0
+				1 ms > 5/8
+				Então precisa de mais uma folga -> setor 1
+				1 ms > 2 * 5/8
+				1 ms > 10/8 -> verdade
+				Então fator 1 resolveu
+			Portanto é precisa um fator de entrelaçamento 2
+		
+		b) 
+			Quanto tempo para ler todos os setores?
+			Ele vai percorrer 2,75 voltas
+			Portanto, são necessário 2,75 * 5 ms
+			13,75 ms
+			
+			Tl = Tlr + Tseek + Ttf
+			Tlr -> 0, porque disse que já estava no setor 0 corretamente posicionado
+			Tseek -> já está no setor 0, então 0
+			Só ttf
+			
+			Para escrita só é diferente porque não precisa verificar se bateu, só gerar o ECC de escrita
