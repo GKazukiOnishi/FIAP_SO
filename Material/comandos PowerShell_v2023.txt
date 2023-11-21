@@ -1,0 +1,55 @@
+1. Criar uma lista dos programas instalados no computador:
+
+Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion | Sort-Object -Property DisplayName -Unique | Format-Table -AutoSize
+
+
+
+2. Listar os 5 processos que estão usando mais memória:
+
+ps | sort –p ws | select –last 5
+
+
+
+3. Exibir o endereço IP atribuído ao computador:
+
+Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter IPEnabled=TRUE -ComputerName . | Format-Table -Property IPAddress
+
+
+
+4. Listar todos  os processos que tenham um conjunto de trabalho maior do que 20 MB:
+
+get-process | where-object {$_.WorkingSet -gt 20.971.520}
+
+
+
+5. Listar os processos em grupos com base nas suas classes de prioridade: 
+
+$a = get-process
+get-process -inputobject $a | format-table -view priority
+
+
+
+6. Listar o número de núcleos (cores) do processador
+
+get-wmiobject -list win32_proc*
+get-wmiobject -class win32_Processor | get-member
+$objProcessor = get-wmiobject -class win32_Processor
+$objProcessor.NumberOfCores
+
+
+
+7. verificando o histórico de dispositivos USB conectados:
+
+Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Enum\USBSTOR\*\* | select FriendlyName, PSChildName
+
+
+
+8. listar os hotfixes instalados:
+
+Get-CimInstance -ClassName Win32_QuickFixEngineering
+
+
+
+9. serviços Status= em execução
+get-service | where{$_.status -eq "running"}
+

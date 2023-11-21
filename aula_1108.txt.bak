@@ -26,7 +26,7 @@ Exercícios
 	(E) Rotinas de tratamento de interrupção devem ser executadas com o mecanismo de interrupção inibido, pois esse tipo de rotina não permite funções aninhadas.
 		Códigos de interrupções tendem a ser menores possíveis, para evitar esse efeito de aninhamento
 		Se já estiver tratando um de um tipo, não vai rodar outra igual
-		Não tem isso de inibido
+		Mas não tem isso de inibido, pode ser que ele vá para outra interrupção se necessário
 		Para evitar ele só deixa os códigos breves (precisa rodar bemm rápido)
 		
 		Na pilha da interrupção, ele salva CS e IP porque sempre vai mudar, vai para outra interrupção em outro lugar da tabela lá
@@ -143,12 +143,12 @@ Exercícios
 			
 			se leva 1 ms para ler um setor:
 				0 > 1 ms -> precisa de um tempo, mais que fator 0
-				1 ms > 5/8
-				Então precisa de mais uma folga -> setor 1
+				1 ms > 5/8 -> teste fator 1
+				Então precisa de mais uma folga -> setor 2
 				1 ms > 2 * 5/8
 				1 ms > 10/8 -> verdade
 				Então fator 2 resolveu
-			Portanto é precisa um fator de entrelaçamento 2
+			Portanto é preciso um fator de entrelaçamento 2
 		
 		b) 
 			Quanto tempo para ler todos os setores?

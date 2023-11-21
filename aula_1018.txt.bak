@@ -159,5 +159,7 @@ RAID
 		Mas caso algum disco quebre, a reconstrução é complexa
 	Nível 6
 		Parecido com o 5 mas tem um nível adicional de paridade
-		
+		E então esses blocos de paridade ficam divididos e distribuídos, deixando a leitura mais cara
+		Mas trás mais confiabilidade
+	
 		

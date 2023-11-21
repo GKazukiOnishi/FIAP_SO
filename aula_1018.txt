@@ -100,7 +100,7 @@ TORÇÃO CILÍNDRICA
 		tempo para ler 1 setor = 6.000 us / 300 = 20 us
 		
 		Portanto, a cada 20 us, um novo setor passa sob a cabeça de leitura.
-		Como o tempo de posicionamento de uma trilha para outra é de 700 us:
+		Como o tempo de posicionamento de uma trilha para outra é de 800 us:
 		
 		torção cilíndrica = 800 us / 20 us = 40 (40 setores deslocados)
 	
