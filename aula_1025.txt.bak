@@ -1,0 +1,165 @@
+Dispositivos de E/S
+	o SO precisa conseguir controlar os dispositivos de E/S
+	compostos por qualquer dispositivo eletrônico que permite comunicação do computador com o mundo externo.
+	Para isso o SO emite comandos para os dispositivos, capturando interrupções e manipulando erros.
+	
+	Para facilitar o uso o SO oferece uma interface que facilita o uso deles, independente do dispositivo
+	
+	Temos dispositivos das seguintes categorias:
+	
+	* Bloco -> Armazenam informações em blocos de tamanhos fixos, entre 128 a 8.192 bytes, cada um com seu endereço.
+		Tem como ler e escrever cada bloco de forma independente.
+		Discos magnéticos e ópticos são exemplos
+	* Caractere -> Leem e escrevem conjuntos de caracteres, sem a possibilidade de endereçar algum conjunto, portanto sem operações
+		de seek implementadas. Ex: Impressos, Interfaces de rede, mouses
+	
+	Existem alguns dispositivos que não se classificam nessas categorias, como os temporizadores que apenas geram interrupções em intervalos
+		de tempo definidos, não enviando nem recebendo caracteres, muito menos apresentando blocos endereçáveis
+	
+	Dentro desse mundo de E/S cada dispositivo apresenta uma ordem de velocidade de transferência, indo de 10 B/s até 1 Gb/s
+
+Controladores de dispositivos
+	Para o funcionamento de uma E/S são necessárias a parte mecânica e a eletrônica.
+	Os controladores são justamente essa parte eletrônica, também chamados de adaptadores.
+	
+	Cada dispositivo passa a receber da controladora o seu endereço de E/S, contendo um vetor de interrupções
+		para os comandos
+
+Módulos de E/S
+	Essa controladora ainda não se comunica diretamente com o barramento do computador, passando primeiro pelos módulos de E/S
+	
+	Esses módulos são chamados de interfaces também, servindo como uma forma do SO se comunicar com diferentes periféricos de uma forma
+		padronizada, tratando cada tipo de periférico
+	Ele contém diversos sinais eletrônicos para as suas ações, status, conexão com o barramento e periférico
+	
+	Ele se comunica com o barramento do processador, utilizando interfaces de alto nível
+	A comunicação com o periférico já é de baixo nível, utilizando sinais eletrônicos e protocolos especializados para cada periférico
+	Isso permite isolar as particularidades de cada periférico no SO
+	
+	Cada módulo pode controlar mais de um periférico também, quando por exemplo são do mesmo tipo.
+	Controlando os periféricos, sua temporização, comunicação com CPU, periférico e armazenamento temporário dos dados e tratamento para erros
+
+Operação com Módulos E/S
+	Podem operar das seguintes maneiras:
+	•	E/S programada (inquirição (polling)).
+	•	E/S via interrupções.
+	•	E/S com acesso direto à memória (DMA – Direct Memory Access).
+	
+	Elas são diferentes no uso da CPU e das interrupções
+	
+	E/S programada
+		O processador executa programas para interagir com a E/S
+		Verificando seu status e preparando para operação, enviando informações necessárias
+		Quando bem sucedido ocorre a transferência de dados entre o módulo de E/S e algum registrador da CPU
+		
+		Dessa forma, para esse forma de operação a CPU é a responsável pela interação, precisando tratar os estados
+			e operações
+		Conhecida como busy waiting (espera ocupada) ou polling (inquirição), já que a CPU espera a operação do módulo E/S
+			(fica verificando status)
+		
+		Ou seja, se o periférico for lento, a CPU vai ficar verificando o status até a finalização, podendo comprometer a performance
+			da CPIU
+		
+		Da mesma forma existe a comunicação contrária, partindo do periférico até o módulo E/S, que irá interpretar e realizar a operação
+		Como eles podem tratar mais de um periférico, apresentam tratamentos para endereçamento quando há compartilhamento de
+			barramento do sistema
+		* Mapeada em Memória: O módulo opera usando memória RAM, em um conjunto de endereços reservados
+			CPU trata os registradores de status e dados do módulo de E/S como posições de memória
+			interagindo com operações de leitura e escrita (ou seja, para funcionar a CPU deve apresentar a capacidade
+				de enviar sinais de escrita e leitura)
+		* Mapeada em E/S: Temos um espaço de endereçamento independente para dispositivos E/S, de forma que a CPU deve conter
+			sinais para se comunicar com essa memória. Esse modo apresenta mais instruções e é mais simples, porém pode acabar
+			tendo menos memória, já que nela vamos ter também endereços de portas E/S para possibiltiar a operação
+			Ela acaba sendo mais segura por ter um espaço reservado, mas pode acabar tendo menos instruções ou uma organização mais complexa.
+		
+	E/S via Interrupções
+		Para evitar a necessidade anterior de espera da CPU por operações de E/S, temos o mecanismo de interrupções
+		Com isso o módulo E/S consegue ganhar a atenção imediata da CPU para sua tarefa, sendo apenas necessário que a CPU
+			dispare os comandos solicitados, sem precisar esperar ou verificar status posteriormente, já que ao concluir a operação
+			o módulo E/S interrompe a CPU para requisitar processamento dos dados.
+		
+		Nisso a CPU é avisada e consegue executar as operações, liberando o módulo E/S rapidamente e voltando à sua operação.
+		
+		1. CPU envia comando para módulo E/S e continua suas operações
+		2. Módulo E/S finaliza operação e gera interrupção para CPU
+		3. Finalizando sua instrução atual, verifica a ocorrência da interrupção e identifica sua origem, sinalizando reconhecimento dela
+		4. Ela então salva o contexto do processo em uma stack para não perder a execução anterior
+		5. Ele carrega no registrador contador de programa o endereço da Rotina de Tratamento de Interrupção (RTI), também chamada de
+			Rotina de Serviço de Interrupção (ISR - Interrupt Service Routine)
+		6. A rotina é executada e ocorre a troca de dados entre módulo E/S e CPU
+		7. Finalizando, a CPU volta o contexto anterior salvo da stack e atualiza o registrador contador de programa e dos demais
+			registradores da CPU
+		8. A CPU volta à sua execução anterior
+		
+		Nisso temos uma melhora de performance do sistema, porém há um problema:
+			Temos poucos sinais de interrupção conectados à CPU,
+			Como ele vai identificar o módulo que gerou a interrupção?
+			Como tratar múltiplas interrupções simultâneas
+		
+		Então temos o PIC (Programmable Interrupt Controller) ou Controlador Programável de Interrupções
+			Ele relaciona as várias fontes de interrupção para um sinal de interrupção para a CPU
+			Consegue tratar prioridade pelos números das interrupções (menor tem mais prioridade)
+	
+	E/S com Acesso Direto à Memória (DMA - Direct Memory Access)
+		O problema das operações anteriores é que ambas acabam interferindo na capacidade da CPU, já que interrompem ou adicionam carga nela.
+		
+		Uma obriga a CPU a ficar verificando status e a executar operações (só volta depois)
+		Outra interrompe a operação e só voltam com a finalização da transferência
+		
+		Então surgiu o acesso direto à memória DMA
+		
+		Essa técnica faz com que os dados do dispositivo E/S sejam movimentados para a memória RAM, reduzindo envolvimento da CPU e acelerando
+			o processo.
+		Para isso é necessária uma Controladora de DMA
+		
+		1. CPU envia comando para o Controlador de DMA
+		2. O controlador usa barramentos de dados, endereços e sinais de controle para acessar a RAM
+		3. Ao final da operação, o módulo E/S gera uma interrupção para sinalizar término da operação
+		4. CPU executa a Rotina de Tratamento de Interrupção, processando os dados lidos e produzindo novos dados para serem escritos
+		
+		Dessa forma essa técnica de operação acaba sendo bem mais rápida que as anteriores, já que só usa uma interrupção que transfere
+			dados em blocos direto da RAM (não de byte em byte)
+		Como o Controlador de DMA é especializado nessa operação, consegue se comunicar com vários módulos E/S, cada um com seu canal DMA distinto
+		
+		Antes do DMA funcionava assim:
+			Controladora ficava lendo blocos do disco de forma serial até guardar no seu buffer interno.
+			Calcula Checksum para verificar erros
+			Gera interrupção para o SO ler o bloco do buffer, usando um laço byte a byte para armazenar em RAM e então processar
+		
+		Como isso gastava muito tempo do processador, o DMA aliviou muito o processador com sua funcionalidade.
+		Para seu funcionamento só é necessário o bloco em RAM, endereços onde o bloco vai ficar e número de bytes a serem transferidos
+		
+		O DMA vai lendo byte a byte e guardando na RAM, quando conclui gera interrupção para o DMA que por sua vez avisa a CPU, 
+		considerando que tudo já está em RAM
+		
+Conexões com os Dispositivos de E/S
+	Conexão ponto a ponto
+		Simples e direta, existem sinais eletrônicos para a comunicação entre os periféricos
+		O módulo E/S apresenta sinais eletrônicos para a comunicação com o periférico
+		
+	Conexão multiponto
+		Conjunto de sinais eletrônicos válidos entre diversos periféricos
+		Desde que seja possível endereçar ou selecionar o periférico da comunicação, é possível
+		
+	A primeira tem mais confiabilidade e possibilita operação simultânea de diversos periféricos, cada um com sua conexão
+		Mas acaba apresenta diversos sinais eletrônicos já que cada um vai ter o seu
+		Ex de conexões padronizadas:
+			Protoclo de comunicação serial RTS/CTS (Request to Send/Clear to Sendo) -> Ponto a ponto
+			IDE (Integrated Device Electronics), SCSI (Small Computer System Interface) e USB (Universal Serial Bus) -> Multiponto
+
+Software de E/S
+	Um conceito fundamental em projetos de software de E/S é a independência de dispositivo de E/S
+	Os programas devem conseguir manipular arquivos em discos magnéticos, ópticos e etc. da mesma forma.
+	
+	Para isso são necessários estruturar o software de E/S em quatro níveis:
+	1. Software em nível de usuário: São os programas de aplicação
+	2. Software do SO independente do dispositivo:
+		Acabam existindo algumas partes específicos de algum dispositivo, mas a ideia da camada é trazer uma interface uniforme
+		para os softwares de aplicação usarem.
+			Como tratamento de erros, alocação e liberação de recursos do SO, gerenciamento de acesso à RAM, identificação
+			e proteção dos dispositivos de E/S etc.
+	3. Drivers de dispositivo: A ideia é que os códigos dependente do dispositivo estejam no driver de dispositivo (device driver)
+		Driver aceita requisições abstratar do software do SO e implementa para o dispositivo em questão, rodando acima do driver
+	4. Tratadores de interrupção: Implementado nos níveis baixos do SO
+		Desbloqueia o processo que gerou a interrupção, tratando cada uma
+		Feita através da RTI
