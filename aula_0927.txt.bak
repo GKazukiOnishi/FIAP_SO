@@ -83,7 +83,7 @@ Windows - Sistema de Arquivos NTFS
 			O registro do arquivo armazena onde o registro base vai continuar
 			Aí ele consegue continuar as séries de blocos até chegar no final
 		
-	Para abrir um arquivo, internamente o SO passa
+	Para abrir um arquivo, intermanete o SO passa
 		\??
 		-> aí ele sabe que está procurando um arquivo
 		E então a partir de um drive lógico, ele vai acessando
